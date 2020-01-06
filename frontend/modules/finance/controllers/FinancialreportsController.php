@@ -5,12 +5,12 @@ namespace frontend\modules\finance\controllers;
 
 use mysqli;
 use Yii;
-use yii\db\Query;
-use yii\helpers\Json;
+use Yii\db\Query;
+use Yii\helpers\Json;
 use yii\data\SqlDataProvider;
-use yii\helpers\ArrayHelper;
+use Yii\helpers\ArrayHelper;
 use kartik\dynagrid\DynaGrid;
-use yii\data\ActiveDataProvider;
+use Yii\data\ActiveDataProvider;
 
 use yii\base\Model;
 
@@ -178,24 +178,27 @@ class FinancialreportsController extends \yii\web\Controller
       //  $searchModel = new AccountingcodeSearch();
      //   $dataProvider2 = $searchModel->search(Yii::$app->request->queryParams);
         
-        $stringQuery ='SELECT Count(*)
-                        FROM eulims_finance.tbl_receipt 
-                        INNER JOIN eulims_finance.tbl_collection  ON eulims_finance.tbl_receipt.or_number = eulims_finance.tbl_collection.receiptId 
-                        INNER JOIN eulims_finance.tbl_deposit ON eulims_finance.tbl_receipt.deposit_id = eulims_finance.tbl_deposit.deposit_id 
-                        WHERE YEAR(eulims_finance.tbl_receipt.receiptDate)=' .$iyear. ' AND MONTH(eulims_finance.tbl_receipt.receiptDate)=' .$imonth;
+//        $stringQuery ='SELECT Count(*)
+//                        FROM eulims_finance.tbl_receipt 
+//                        INNER JOIN eulims_finance.tbl_collection  ON eulims_finance.tbl_receipt.or_number = eulims_finance.tbl_collection.oldColumn_receiptId 
+//                        INNER JOIN eulims_finance.tbl_deposit ON eulims_finance.tbl_receipt.deposit_id = eulims_finance.tbl_deposit.deposit_id 
+//                        WHERE YEAR(eulims_finance.tbl_receipt.receiptDate)=' .$iyear. ' AND MONTH(eulims_finance.tbl_receipt.receiptDate)=' .$imonth;
         
-       
+        $stringQuery = "Call eulims_finance.spGetCollectionReportNewCount('" . $iyear . "','" . $imonth ."');";  
         $count = Yii::$app->db->createCommand($stringQuery)->queryScalar();
-        $queryNew = new yii\db\Query;
+        
+        
+       // $count = Yii::$app->db->createCommand($stringQuery)->queryScalar();
+      //  $queryNew = new Yii\db\Query;
 
         $stringWhere = 'YEAR(eulims_finance.tbl_receipt.receiptDate)=' .$iyear. ' AND MONTH(eulims_finance.tbl_receipt.receiptDate)=' .$imonth;
         
                                
                                
                                
-        $queryNewest =  'Call eulims_finance_migration.spGetCollectionReportNew('. $iyear .','. $imonth . ');';    //'Call eulims_finance.spGetCollectionReportNew(2018,5);';
+        $queryNewest =  'Call eulims_finance.spGetCollectionReportNew('. $iyear .','. $imonth . ');';    //'Call eulims_finance.spGetCollectionReportNew(2018,5);';
     //     $queryNewest ='Call spGetCollectionReport(2018,5)';                      
-        $queryDaw =Yii::$app->db->createCommand('Call eulims_finance_migration.spGetCollectionReportNew('. $iyear .','. $imonth . ');')->queryScalar(); 
+        $queryDaw =Yii::$app->db->createCommand('Call eulims_finance.spGetCollectionReportNew('. $iyear .','. $imonth . ');')->queryScalar(); 
           
       //  $count = Yii::$app->db->createCommand('SELECT COUNT(*) FROM eulims_finance.tbl_collectiontype')->queryScalar();
       //  $columnHeaders = Yii::$app->db->createCommand('SELECT accountcode FROM eulims_finance.tbl_accountingcode')->queryAll();
@@ -222,11 +225,58 @@ class FinancialreportsController extends \yii\web\Controller
         ]);
     }
     
+    public function actionCollectionreportdaily($datefrom,$dateto)
+    {
+        
+        
+    //    $monthName = date("F", mktime(0, 0, 0, $imonth, 10));
+         $moduleTitle = "Collection Report for " . $datefrom . ' to ' . $dateto;
+//        
+//        $stringQuery ="SELECT COUNT(*)
+//                        FROM eulims_finance_migration.tbl_receipt 
+//                        INNER JOIN eulims_finance_migration.tbl_collection  ON eulims_finance_migration.tbl_receipt.or_number = eulims_finance_migration.tbl_collection.oldColumn_receiptId 
+//                        INNER JOIN eulims_finance_migration.tbl_deposit ON eulims_finance_migration.tbl_receipt.deposit_id = eulims_finance_migration.tbl_deposit.deposit_id 
+//                        WHERE eulims_finance_migration.tbl_receipt.receiptDate  BETWEEN '" .$datefrom.   "' AND '" . $dateto. "'";
+        $stringQuery = "Call eulims_finance.spGetCollectiomReportDailyCount('" . $datefrom . "','" . $dateto ."');";  
+        $count = Yii::$app->db->createCommand($stringQuery)->queryScalar();
+      //  $count = Yii::$app->db->createCommand($stringQuery)->queryScalar();
+       // $stringWhere = 'YEAR(eulims_finance.tbl_receipt.receiptDate)=' .$iyear. ' AND MONTH(eulims_finance.tbl_receipt.receiptDate)=' .$imonth;
+     //   $queryNewest =  'Call eulims_finance_migration.spGetCollectionReportNew('. $iyear .','. $imonth . ');';    //'Call eulims_finance.spGetCollectionReportNew(2018,5);';
+      //  $queryDaw =Yii::$app->db->createCommand('Call eulims_finance_migration.spGetCollectionReportDaily('. $iyear .','. $imonth . ');')->queryScalar(); 
+        
+         $queryNewest =  "Call eulims_finance.spGetCollectiomReportDaily('" . $datefrom . "','" . $dateto ."');";  
+          
+        $dataProvider = new SqlDataProvider([
+            'sql' => $queryNewest,
+            'totalCount' => $count,
+          //  'pagination' => false
+            'sort' =>false,
+        'pagination' => [
+            'pageSize' => 8,
+        ],
+        ]);
+        
+         return $this->render('collectionreport', [
+                  // 'count' => $counter,
+                    'dataProvider' => $dataProvider,
+                    'moduleTitle'=>$moduleTitle
+        ]);
+    }
+    
     
     public function actionIndex()
     {
         $model = new YearMonth();
-        $listYear =['2018','2017','2016','2015'];
+        $listYear =[]; //['2018','2017','2016','2015'];
+        
+        $arrayYear = Yii::$app->db->createCommand('CALL spGetYearArrayforReceipt();')->queryAll();
+        $index = 0;
+        foreach ($arrayYear as $colYear)
+            {
+                array_push($listYear,$colYear['iyear']);
+            }
+            
+            
         $listMonth = ["0" => "All",
                     "1" => "January", "2" => "February", "3" => "March", "4" => "April",
                     "5" => "May", "6" => "June", "7" => "July", "8" => "August",
