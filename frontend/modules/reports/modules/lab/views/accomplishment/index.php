@@ -22,7 +22,7 @@ $this->params['breadcrumbs'][] = $this->title;
 $pdfHeader="OneLab-Enhanced ULIMS";
 $pdfFooter="{PAGENO}";
 ?>
-
+ <?php $this->registerJsFile("/js/services/services.js"); ?>
 <div class="accomplishment-index">
 <div class="panel panel-default col-xs-12">
         <div class="panel-heading"><i class="fa fa-adn"></i> </div>
@@ -37,6 +37,7 @@ $pdfFooter="{PAGENO}";
 				'method' => 'get',
 			])
     	?>
+    
     		<div class="row">
 		        <div id="lab-name" style="width:25%;position: relative; float:left;margin-right: 20px;">
 		            <?php
@@ -89,7 +90,7 @@ $pdfFooter="{PAGENO}";
 		    <?php ActiveForm::end(); ?>
        </div>
 		    <div class="row">
-		  
+			<?php $this->registerJsFile("/js/services/services.js"); ?>
 		    <?php //\yii\widgets\Pjax::begin(); ?>
         	<?php
         		$startDate = Yii::$app->request->get('from_date', date('Y-01-01'));
@@ -98,10 +99,23 @@ $pdfFooter="{PAGENO}";
         		$labCode = Lab::findOne($labId)->labcode;
 
 				$gridColumns = [
+					['class' => 'kartik\grid\ActionColumn',
+					'contentOptions' => ['style' => 'width: 8.7%'],
+					'template' => '{view}',
+					'buttons'=>[
+						'view'=>function ($url, $model) {
+							return Html::button('<span class="glyphicon glyphicon-print"></span>', ['value'=>Url::to(['/lab/tagging/monthlyreport','month'=>Yii::$app->formatter->asDate($model->request_datetime, 'php:M'), 'year'=>Yii::$app->formatter->asDate($model->request_datetime, 'php:Y')]), 'class' => 'btn btn-primary modal_method','onclick'=>'LoadModal(this.title, this.value ,true, 1850);','title' => Yii::t('app', "Monthly Report")]);
+						},
+					   
+					],
+					],
 	    		    [
 			            'attribute'=>'request_datetime', 
 			            'header' => 'Year',
-			            //'width'=>'310px',
+						//'width'=>'310px',
+						// 'value'=>function ($model, $key, $index, $widget) {
+						// 	return "ito yun";
+						// },
 			            'value'=>function ($model, $key, $index, $widget) {
 		                    return Yii::$app->formatter->asDate($model->request_datetime, 'php:Y');
 		                },
@@ -115,7 +129,7 @@ $pdfFooter="{PAGENO}";
 			                    'mergeColumns'=>[[1]], // columns to merge in summary
 			                    'content'=>[             // content to show in each summary cell
 			                        1=>'SUB-TOTAL ('.Yii::$app->formatter->asDate($model->request_datetime, 'php:Y').')',
-			                        2=>GridView::F_SUM,
+			                       // 2=>GridView::F_SUM,
 			                        3=>GridView::F_SUM,
 			                        4=>GridView::F_SUM,
 			                        5=>GridView::F_SUM,
@@ -123,30 +137,30 @@ $pdfFooter="{PAGENO}";
 			                        7=>GridView::F_SUM,
 			                        8=>GridView::F_SUM,
 			                        9=>GridView::F_SUM,
-			                        10=>GridView::F_SUM,
+			                        //10=>GridView::F_SUM,
 			                    ],
 			                    'contentFormats'=>[      // content reformatting for each summary cell
-			                        2=>['format'=>'number', 'decimals'=>0],
+			                        //2=>['format'=>'number', 'decimals'=>0],
 			                        3=>['format'=>'number', 'decimals'=>0],
 			                        4=>['format'=>'number', 'decimals'=>0],
-			                        5=>['format'=>'number', 'decimals'=>0],
+			                        5=>['format'=>'number', 'decimals'=>2],
 			                        6=>['format'=>'number', 'decimals'=>2],
 			                        7=>['format'=>'number', 'decimals'=>2],
 			                        8=>['format'=>'number', 'decimals'=>2],
 			                        9=>['format'=>'number', 'decimals'=>2],
-			                        10=>['format'=>'number', 'decimals'=>2],
+			                        //10=>['format'=>'number', 'decimals'=>2],
 			                    ],
 			                    'contentOptions'=>[      // content html attributes for each summary cell
 			                        1=>['style'=>'font-variant:small-caps'],
-			                        2=>['style'=>'text-align:center'],
+			                        //2=>['style'=>'text-align:center'],
 			                        3=>['style'=>'text-align:center'],
 			                        4=>['style'=>'text-align:center'],
-			                        5=>['style'=>'text-align:center'],
+			                        5=>['style'=>'text-align:right'],
 			                        6=>['style'=>'text-align:right'],
 			                        7=>['style'=>'text-align:right'],
 			                        8=>['style'=>'text-align:right'],
 			                        9=>['style'=>'text-align:right'],
-			                        10=>['style'=>'text-align:right'],
+			                        //10=>['style'=>'text-align:right'],
 			                    ],
 			                    // html attributes for group summary row
 			                    'options'=>['class'=>'text-success bg-warning']
@@ -164,7 +178,7 @@ $pdfFooter="{PAGENO}";
 		                'pageSummary'=>'GRAND TOTAL',
 		                'pageSummaryOptions'=>['class'=>'text-left text-primary bg-success'],
 		            ],
-		            [
+		            /*[
 		                'attribute'=>'request_ref_num',
 		                'header' => 'No. of Customers',
 		                'headerOptions' => ['class' => 'text-center'],
@@ -176,7 +190,7 @@ $pdfFooter="{PAGENO}";
 		                'pageSummary'=>true,
         				'pageSummaryFunc'=>GridView::F_SUM,
         				'pageSummaryOptions'=>['class'=>'text-center text-primary'],
-		            ],
+		            ],*/
 		            [
 		                'attribute'=>'request_ref_num',
 		                'header' => 'No. of Requests',
@@ -278,7 +292,8 @@ $pdfFooter="{PAGENO}";
 		                'pageSummary'=>true,
         				'pageSummaryFunc'=>GridView::F_SUM,
         				'pageSummaryOptions'=>['class'=>'text-right text-primary'],
-		            ],
+					],
+					
 			    ];
 
 				    echo GridView::widget([

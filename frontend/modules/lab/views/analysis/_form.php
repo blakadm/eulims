@@ -138,13 +138,6 @@ $this->registerJs($js);
          ->leftJoin('tbl_lab_sampletype', 'tbl_lab_sampletype.testcategory_id=tbl_testcategory.testcategory_id')
          ->Where(['tbl_lab_sampletype.lab_id'=>$requestquery->lab_id])
          ->orderBy(['testcategory_id' => SORT_DESC])->all(),'testcategory_id','category');
-
-        //  $category= ArrayHelper::map(Testcategory::find()
-        //  ->all(),'testcategory_id','category');
-
-        //  echo "<pre>";
-        //  var_dump($category);
-        //  echo "</pre>";
     ?>
       <?= Html::textInput('lab_id', $requestquery->lab_id, ['class' => 'form-control', 'id'=>'lab_id', 'type'=>'hidden'], ['readonly' => true]) ?>
     <?= $form->field($model,'category_id')->widget(Select2::classname(),[

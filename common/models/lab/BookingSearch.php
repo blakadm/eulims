@@ -41,7 +41,7 @@ class BookingSearch extends Booking
      */
     public function search($params)
     {
-        $query = Booking::find();
+        $query = Booking::find()->where(['rstl_id'=>Yii::$app->user->identity->profile->rstl_id]);
 
         // add conditions that should always apply here
 

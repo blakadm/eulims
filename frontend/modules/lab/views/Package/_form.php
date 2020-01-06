@@ -43,6 +43,7 @@ $sampletypelist= ArrayHelper::map(Sampletype::find()->all(),'sampletype_id','typ
     ?>
 
     
+    
     <?= $form->field($model,'testcategory_id')->widget(Select2::classname(),[
                     'data' => $category,
                     'theme' => Select2::THEME_KRAJEE,

@@ -42,7 +42,7 @@ class ProductsSearch extends Products
      */
     public function search($params)
     {
-        $query = Products::find()->orderBy(['product_code' => SORT_ASC]);
+        $query = Products::find()->orderBy(['product_code' => SORT_ASC])->where(['rstl_id'=>Yii::$app->user->identity->profile->rstl_id]);
 
         // add conditions that should always apply here
 

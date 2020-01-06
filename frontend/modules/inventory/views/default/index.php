@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use kartik\grid\GridView;
+$Button="{ok}";
 ?>
 <div class="Lab-default-index">
     <div class="alert alert-warning">
@@ -34,7 +35,23 @@ use kartik\grid\GridView;
                     }
                 ],
                 'date_created',
-
+                [
+                    'class' => 'kartik\grid\ActionColumn',
+                    'template' => $Button,
+                    'buttons' => [
+                        'ok' => function($url, $model){
+                             
+                             return Html::a('Solve <span class="glyphicon glyphicon-question-sign"></span>',
+                                ['default/solve/?id='.$model->reorder_id],
+                                [
+                                    'data-confirm' => "Have you reordered more?",
+                                    'class'=>'pull-left btn btn-success',
+                                ]
+                            ); 
+                        }
+                    ],
+                    
+                ],
                 // ['class' => 'yii\grid\ActionColumn'],
             ],
         ]); ?>

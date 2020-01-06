@@ -67,7 +67,7 @@ class Testreport extends \yii\db\ActiveRecord
             'testreport_id' => 'Testreport ID',
             'request_id' => 'Request ID',
             'lab_id' => 'Lab ID',
-            'report_num' => 'Report Num',
+            'report_num' => 'Report Number',
             'report_date' => 'Report Date',
             'status_id' => 'Status ID',
             'release_date' => 'Release Date',

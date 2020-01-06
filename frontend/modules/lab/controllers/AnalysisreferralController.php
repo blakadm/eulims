@@ -172,7 +172,7 @@ class AnalysisreferralController extends Controller
             }
             analysisfail: {
                 $transaction->rollBack();
-                Yii::$app->session->setFlash('error', "Analysis fail to save.");
+                Yii::$app->session->setFlash('error', "Analysis failed to save.");
                 return $this->redirect(['/lab/request/view', 'id' => $requestId]);
             }
         } elseif (Yii::$app->request->isAjax) {
@@ -290,7 +290,7 @@ class AnalysisreferralController extends Controller
             }
             analysisfail: {
                 $transaction->rollBack();
-                Yii::$app->session->setFlash('error', "Analysis fail to update.");
+                Yii::$app->session->setFlash('error', "Analysis failed to update.");
                 return $this->redirect(['/lab/request/view', 'id' => $requestId]);
             }
         } elseif (Yii::$app->request->isAjax) {
@@ -435,8 +435,8 @@ class AnalysisreferralController extends Controller
 
         //echo $a;
 
-        //$apiUrl='http://localhost/eulimsapi.onelab.ph/api/web/referral/listdatas/testnamebysampletype?sampletype_id='.$sampletypeId;
-        $apiUrl='https://eulimsapi.onelab.ph/api/web/referral/listdatas/testnamebysampletype?sampletype_id='.$sampletypeId;
+        $apiUrl='http://localhost/eulimsapi.onelab.ph/api/web/referral/listdatas/testnamebysampletype?sampletype_id='.$sampletypeId;
+        //$apiUrl='https://eulimsapi.onelab.ph/api/web/referral/listdatas/testnamebysampletype?sampletype_id='.$sampletypeId;
         $curl = new curl\Curl();
         $list = $curl->get($apiUrl);
 
@@ -466,8 +466,8 @@ class AnalysisreferralController extends Controller
             }
         }
         //$apiUrl='http://localhost/eulimsapi.onelab.ph/api/web/referral/listdatas/labsampletypebylab?lab_id='.$labId;
-        //$apiUrl='http://localhost/eulimsapi.onelab.ph/api/web/referral/listdatas/testnamebysampletype?sampletype_id='.$sampletypeId;
-        $apiUrl='https://eulimsapi.onelab.ph/api/web/referral/listdatas/testnamebysampletype?sampletype_id='.$sampletypeId;
+        $apiUrl='http://localhost/eulimsapi.onelab.ph/api/web/referral/listdatas/testnamebysampletype?sampletype_id='.$sampletypeId;
+        //$apiUrl='https://eulimsapi.onelab.ph/api/web/referral/listdatas/testnamebysampletype?sampletype_id='.$sampletypeId;
         $curl = new curl\Curl();
         $list = $curl->get($apiUrl);
 
@@ -543,8 +543,8 @@ class AnalysisreferralController extends Controller
                 return $data['sampletype_id'];
             }, $sample));
 
-            //$apiUrl='http://localhost/eulimsapi.onelab.ph/api/web/referral/listdatas/testnamebysampletype?sampletype_id='.$sampletypeId;
-            $apiUrl='https://eulimsapi.onelab.ph/api/web/referral/listdatas/testnamebysampletype?sampletype_id='.$sampletypeId;
+            $apiUrl='http://localhost/eulimsapi.onelab.ph/api/web/referral/listdatas/testnamebysampletype?sampletype_id='.$sampletypeId;
+            //$apiUrl='https://eulimsapi.onelab.ph/api/web/referral/listdatas/testnamebysampletype?sampletype_id='.$sampletypeId;
             $curl = new curl\Curl();
             $curl->setOption(CURLOPT_CONNECTTIMEOUT, 120);
             $curl->setOption(CURLOPT_TIMEOUT, 120);
@@ -649,8 +649,8 @@ class AnalysisreferralController extends Controller
             //$testnameId = Yii::$app->request->get('testname_id');
 
             if($testnameId > 0){
-                //$apiUrl='http://localhost/eulimsapi.onelab.ph/api/web/referral/listdatas/testnamemethodref?testname_id='.$testnameId;
-                $apiUrl='https://eulimsapi.onelab.ph/api/web/referral/listdatas/testnamemethodref?testname_id='.$testnameId;
+                $apiUrl='http://localhost/eulimsapi.onelab.ph/api/web/referral/listdatas/testnamemethodref?testname_id='.$testnameId;
+                //$apiUrl='https://eulimsapi.onelab.ph/api/web/referral/listdatas/testnamemethodref?testname_id='.$testnameId;
                 $curl = new curl\Curl();
                 $curl->setOption(CURLOPT_CONNECTTIMEOUT, 120);
                 $curl->setOption(CURLOPT_TIMEOUT, 120);
@@ -693,8 +693,8 @@ class AnalysisreferralController extends Controller
 
         if($analysisId > 0){
             $model = $this->findModel($analysisId);
-            //$apiUrl='http://localhost/eulimsapi.onelab.ph/api/web/referral/listdatas/setpagemethodref?testname_id='.$model->test_id.'&methodref_id='.$model->methodref_id.'&perpage='.$perpage;
-            $apiUrl='https://eulimsapi.onelab.ph/api/web/referral/listdatas/setpagemethodref?testname_id='.$model->test_id.'&methodref_id='.$model->methodref_id.'&perpage='.$perpage;
+            $apiUrl='http://localhost/eulimsapi.onelab.ph/api/web/referral/listdatas/setpagemethodref?testname_id='.$model->test_id.'&methodref_id='.$model->methodref_id.'&perpage='.$perpage;
+            //$apiUrl='https://eulimsapi.onelab.ph/api/web/referral/listdatas/setpagemethodref?testname_id='.$model->test_id.'&methodref_id='.$model->methodref_id.'&perpage='.$perpage;
             $curl = new curl\Curl();
             $curl->setOption(CURLOPT_CONNECTTIMEOUT, 180);
             $curl->setOption(CURLOPT_TIMEOUT, 180);
@@ -758,6 +758,10 @@ class AnalysisreferralController extends Controller
             $connection = Yii::$app->labdb;
             $transaction = $connection->beginTransaction();
             $connection->createCommand('SET FOREIGN_KEY_CHECKS=0')->execute();
+
+            if($request->discount > 0) {
+                goto packagefail;
+            }
 
             $postData = Yii::$app->request->post();
             foreach ($postData['sample_ids'] as $sampleId) {
@@ -833,7 +837,7 @@ class AnalysisreferralController extends Controller
             }
             packagefail: {
                 $transaction->rollBack();
-                Yii::$app->session->setFlash('error', "Package fail to save!");
+                Yii::$app->session->setFlash('error', "Package failed to save!");
                 return $this->redirect(['/lab/request/view', 'id' => $requestId]);
             }
         } elseif (Yii::$app->request->isAjax) {
@@ -1002,7 +1006,7 @@ class AnalysisreferralController extends Controller
             }
             packagefail: {
                 $transaction->rollBack();
-                Yii::$app->session->setFlash('error', "Fail to update package!");
+                Yii::$app->session->setFlash('error', "Failed to update package!");
                 return $this->redirect(['/lab/request/view', 'id' => $requestId]);
             }
         } elseif (Yii::$app->request->isAjax) {
@@ -1050,15 +1054,15 @@ class AnalysisreferralController extends Controller
                         Yii::$app->session->setFlash('success', "Package successfully removed.");
                         return $this->redirect(['/lab/request/view', 'id' => $request_id]);
                     } else {
-                        Yii::$app->session->setFlash('error', "Fail to update total!");
+                        Yii::$app->session->setFlash('error', "Failed to update total!");
                         return $this->redirect(['/lab/request/view', 'id' => $request_id]);
                     }
                 } else {
-                    Yii::$app->session->setFlash('error', "Fail to delete package!");
+                    Yii::$app->session->setFlash('error', "Failed to delete package!");
                     return $this->redirect(['/lab/request/view', 'id' => $request_id]);
                 }
             } else {
-                Yii::$app->session->setFlash('error', "Fail to delete package!");
+                Yii::$app->session->setFlash('error', "Failed to delete package!");
                 return $this->redirect(['/lab/request/view', 'id' => $request_id]);
             }
         } else {
@@ -1138,8 +1142,8 @@ class AnalysisreferralController extends Controller
         if(isset($packageId))
         {
             if($packageId > 0){
-                //$apiUrl='http://localhost/eulimsapi.onelab.ph/api/web/referral/listdatas/testnamemethodref?testname_id='.$testnameId;
-                $apiUrl='https://eulimsapi.onelab.ph/api/web/referral/listdatas/testnamemethodref?testname_id='.$testnameId;
+                $apiUrl='http://localhost/eulimsapi.onelab.ph/api/web/referral/listdatas/testnamemethodref?testname_id='.$testnameId;
+                //$apiUrl='https://eulimsapi.onelab.ph/api/web/referral/listdatas/testnamemethodref?testname_id='.$testnameId;
                 $curl = new curl\Curl();
                 $curl->setOption(CURLOPT_CONNECTTIMEOUT, 180);
                 $curl->setOption(CURLOPT_TIMEOUT, 180);

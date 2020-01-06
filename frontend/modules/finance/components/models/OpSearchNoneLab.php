@@ -47,7 +47,7 @@ class OpSearchNoneLab extends Op
      */
     public function search($params)
     {
-        $query = Op::find();
+        $query = Op::find()->where(['rstl_id'=>Yii::$app->user->identity->profile->rstl_id]);
 
         // add conditions that should always apply here
 

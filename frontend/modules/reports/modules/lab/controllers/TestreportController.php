@@ -49,7 +49,8 @@ class TestreportController extends Controller
     {
         $searchModel = new TestreportSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
+        
+        $dataProvider->sort->defaultOrder = ['testreport_id' => SORT_DESC];
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,

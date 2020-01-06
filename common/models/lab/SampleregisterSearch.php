@@ -77,7 +77,7 @@ class SampleregisterSearch extends Sampleextend
 
             $query->where('status_id < :statusId AND lab_id = :labId AND active =:active AND request_ref_num != "" AND DATE_FORMAT(`request_datetime`, "%Y-%m-%d") BETWEEN :fromRequestDate AND :toRequestDate',[':statusId'=>2,':labId'=>$labId,':active'=>1,':fromRequestDate'=>$fromDate,':toRequestDate'=>$toDate]);
             $query->orderBy([
-                'tbl_sample.request_id' => SORT_ASC,
+                'tbl_sample.request_id' => SORT_DESC,
             ]);
         }
 
@@ -86,7 +86,7 @@ class SampleregisterSearch extends Sampleextend
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
-
+       // $dataProvider->sort->defaultOrder = ['sample_id' => SORT_DESC];
         $this->load($params);
 
         if (!$this->validate()) {

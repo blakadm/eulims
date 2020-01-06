@@ -3,6 +3,7 @@
 namespace common\models\lab;
 
 use Yii;
+use common\models\lab\Customer;
 
 /**
  * This is the model class for table "tbl_booking".
@@ -63,5 +64,9 @@ class Booking extends \yii\db\ActiveRecord
             'qty_sample' => 'Qty Sample',
             'customer_id' => 'Customer ID',
         ];
+    }
+    public function getCustomer()
+    {
+        return $this->hasOne(Customer::className(), ['customer_id' => 'customer_id']);
     }
 }

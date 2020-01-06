@@ -119,7 +119,9 @@ $sameSampletype = !empty($model->sampletype_id) ? $model->sampletype_id : 0;
         
     <?= $form->field($model, 'samplename')->textInput(['maxlength' => true,'placeholder' => 'Enter sample name ...']) ?>
 
-    <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
+    <?= $form->field($model, 'description')->textarea(['rows' => 3]) ?>
+
+    <?= $form->field($model, 'customer_description')->textarea(['rows' => 3])->label("Description provided by Customer") ?>
 
     <?php
         if(empty($model->sample_id)){

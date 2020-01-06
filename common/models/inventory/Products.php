@@ -27,6 +27,7 @@ use Yii;
  * @property string $Image1
  * @property string $Image2
  * @property string $sds
+ * @property int $rstl_id
  *
  * @property InventoryEntries[] $inventoryEntries
  * @property InventoryWithdrawaldetails[] $inventoryWithdrawaldetails
@@ -59,8 +60,8 @@ class Products extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['product_name', 'categorytype_id', 'qty_reorder', 'qty_onhand', 'qty_min_reorder', 'unit', 'created_by'], 'required'],
-            [['producttype_id', 'categorytype_id', 'qty_reorder', 'qty_onhand', 'qty_min_reorder', 'discontinued', 'created_by', 'created_at', 'updated_at'], 'integer'],
+            [['rstl_id','product_name', 'categorytype_id', 'qty_reorder', 'qty_onhand', 'qty_min_reorder', 'unit', 'created_by'], 'required'],
+            [['rstl_id','producttype_id', 'categorytype_id', 'qty_reorder', 'qty_onhand', 'qty_min_reorder', 'discontinued', 'created_by', 'created_at', 'updated_at'], 'integer'],
             [['description'], 'string'],
             [['price', 'srp'], 'number'],
             [['suppliers_ids','Image1','Image2'], 'safe'],
@@ -98,6 +99,7 @@ class Products extends \yii\db\ActiveRecord
             'Image1' => 'Image1',
             'Image2' => 'Image2',
             'sds' => 'Safety Data Sheet',
+            'rstl_id' => 'Rstl ID',
         ];
     }
 

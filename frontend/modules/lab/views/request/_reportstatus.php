@@ -40,6 +40,7 @@ use common\models\system\Profile;
         'type'=>'primary',
         'items'=>false,
     ],
+    'toolbar' => false,
     'columns' => [
         [
             'header'=>'Report #',

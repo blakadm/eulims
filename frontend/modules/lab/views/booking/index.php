@@ -8,8 +8,8 @@ use yii\web\JsExpression;
 /* @var $searchModel common\models\lab\BookingSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Manage Booking';
-$this->params['breadcrumbs'][] = ['label' => 'Booking', 'url' => ['/lab/booking']];
+$this->title = 'Booking';
+$this->params['breadcrumbs'][] = ['label' => 'Manage Booking', 'url' => ['/lab/booking/manage']];
 $this->params['breadcrumbs'][] = $this->title;
 
 $DragJS = <<<EOF
@@ -96,9 +96,9 @@ EOF;
    <?= \yii2fullcalendar\yii2fullcalendar::widget(array(
           'events'=> Url::to(["/lab/booking/jsoncalendar?id=$rstl_id"]),
           'clientOptions' => [
-                        'selectable' => true,
+                       // 'selectable' => true,
                         'selectHelper' => true,
-                        'droppable' => true,
+                      //  'droppable' => true,
                         'editable' => true,
                         'height'=>500,
                         // 'select' => new JsExpression($JSCode),

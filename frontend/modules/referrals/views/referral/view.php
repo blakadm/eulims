@@ -27,7 +27,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 $cancelButton = "";
 if($notification['notification_type_id'] == 1 && $notification['responded'] == 0){
-    $actionButtonConfirm = "<div class='row' style='margin-left: 2px;padding-top: 5px'>".Html::button('<span class="glyphicon glyphicon-ok"></span> Confirm Referral Notification', ['value'=>Url::to(['/referrals/referral/confirm','local_request_id'=>$request['local_request_id'],'referral_id'=>$request['referral_id'],'notice_id'=>$notification['notification_id'],'sender_id'=>$notification['sender_id']]),'onclick'=>'confirmNotification(this.value,this.title)','class' => 'btn btn-primary','title' => 'Confirm Referral of '.$receiving_agency]);
+    $actionButtonConfirm = "<div class='row' style='margin-left: 2px;padding-top: 5px'>".Html::button('<span class="glyphicon glyphicon-ok"></span> Accept Referral Notification', ['value'=>Url::to(['/referrals/referral/confirm','local_request_id'=>$request['local_request_id'],'referral_id'=>$request['referral_id'],'notice_id'=>$notification['notification_id'],'sender_id'=>$notification['sender_id']]),'onclick'=>'confirmNotification(this.value,this.title)','class' => 'btn btn-primary','title' => 'Confirm Referral of '.$receiving_agency]);
 } else {
     $actionButtonConfirm = "";
 }
@@ -245,6 +245,18 @@ if($notification['notification_type_id'] == 3 && $notification['responded'] == 0
                         'style'=>'max-width:180px; overflow: auto; white-space: normal; word-wrap: break-word;'
                     ],
                 ],
+                [
+                    'attribute'=>'customer_description',
+                    'header'=>'Description provided by Customer',
+                    'format' => 'raw',
+                    'enableSorting' => false,
+                    'value' => function($data){
+                        return empty($data['customer_description']) ? "<span style='color:#444444;font-size:11px;'><i>No information provided</i></span>" : $data['customer_description'];
+                    },
+                   'contentOptions' => [
+                        'style'=>'max-width:180px; overflow: auto; white-space: normal; word-wrap: break-word;'
+                    ],
+                ],
             ];
 
             echo GridView::widget([
@@ -402,10 +414,10 @@ if($notification['notification_type_id'] == 3 && $notification['responded'] == 0
 
         BootstrapDialog.show({
             title: "<span class='glyphicon glyphicon-send'></span>&nbsp;&nbsp;" + header_title,
-            message: "<p class='note' style='margin:15px 0 0 15px;font-weight:bold;color:#990000;font-size:14px;'><span class='glyphicon glyphicon-exclamation-sign' style='font-size:17px;'></span> Are you sure you want to confirm the referral notification of <span class='agency-name' style='color:#000000;'>"+agency_name+"</span>?</p>",
+            message: "<p class='note' style='margin:15px 0 0 15px;font-weight:bold;color:#990000;font-size:14px;'><span class='glyphicon glyphicon-exclamation-sign' style='font-size:17px;'></span> Are you sure you want to accept this referral request from <span class='agency-name' style='color:#000000;'>"+agency_name+"</span>?</p>",
             buttons: [
                 {
-                    label: 'Proceed',
+                    label: 'Accept',
                     cssClass: 'btn-primary',
                     action: function(thisDialog){
                         thisDialog.close();

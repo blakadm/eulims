@@ -3,6 +3,8 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 use kartik\grid\GridView;
 use yii\grid\ActionColumn;
+use common\components\Functions;
+
 /* @var $this yii\web\View */
 /* @var $model common\models\lab\Customer */
 $this->title = $model->customer_name;
@@ -22,7 +24,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'tel',
             'fax',
             // 'email:email',
-            'address',
+            'Completeaddress'
             // 'latitude',
             // 'longitude',
         ],

@@ -160,7 +160,8 @@ class ServicesController extends Controller
         if (isset($_POST['depdrop_parents'])) {
             $id = end($_POST['depdrop_parents']);
 
-            $apiUrl="https://eulimsapi.onelab.ph/api/web/v1/sampletypes/restore?id=".$id;
+           // $apiUrl="https://eulimsapi.onelab.ph/api/web/v1/sampletypes/restore?id=".$id;
+            $apiUrl="https://192.168.1.102/api/web/v1/sampletypes/restore?id=".$id;
             $curl = new curl\Curl();
             $curl->setOption(CURLOPT_SSL_VERIFYPEER, false);
             $response = $curl->get($apiUrl);

@@ -57,7 +57,7 @@ class Op extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['transactionnum', 'collectiontype_id', 'payment_mode_id', 'order_date', 'customer_id', 'purpose'], 'required'],
+            [['transactionnum', 'collectiontype_id', 'payment_mode_id', 'order_date', 'customer_id'], 'required'],
 	    ['RequestIds', 'required','message' => 'Please select Request.'],
             [['rstl_id', 'collectiontype_id', 'payment_mode_id', 'customer_id', 'receipt_id','on_account','payment_status_id'], 'integer'],
             [['order_date','RequestIds','payment_status_id','subsidiary_customer_ids'], 'safe'],

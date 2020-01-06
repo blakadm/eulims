@@ -23,8 +23,14 @@ use common\models\finance\Restore_paymentitem;
 use common\models\finance\Restore_deposit;
 use common\models\finance\Restore_receipt;
 use common\models\finance\Restore_check;
-
 use common\models\finance\Deposit;
+
+use common\models\rental\Application;
+use common\models\rental\Billing;
+//use common\models\rental\Customer;
+use common\models\rental\Item_type;
+use common\models\rental\Item;
+//use common\models\rental\Profile;
 
 /* @property Customer $customer */
 class ApiController extends ActiveController

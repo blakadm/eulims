@@ -149,7 +149,7 @@ class NotificationController extends Controller
 
         $notice_list = [];
         if(count($unresponded_notification) > 0) {
-            foreach ($unresponded_notification as $data) {
+            foreach (array_slice($unresponded_notification,0,10,true) as $data) {
                 //$notification_type = $data['notification_type_id'];
                 switch($data['notification_type_id']){
                     case 1:

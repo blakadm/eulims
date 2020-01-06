@@ -98,13 +98,13 @@ $this->params['breadcrumbs'][] = $this->title;
                             },
              
             ],
-            [
-                'attribute' => 'tests',
-                'label' => 'Tests',
-                'format' => 'raw',
-               // 'width'=>'20%',
-                'contentOptions' => ['style' => 'width: 50%;word-wrap: break-word;white-space:pre-line;'],
-                'value' => function($model) {
+            // [
+            //     'attribute' => 'tests',
+            //     'label' => 'Tests',
+            //     'format' => 'raw',
+            //    // 'width'=>'20%',
+            //     'contentOptions' => ['style' => 'width: 50%;word-wrap: break-word;white-space:pre-line;'],
+            //     'value' => function($model) {
 
                         // if ($model->tests){
                         //     $tet = $model->tests;  
@@ -138,14 +138,14 @@ $this->params['breadcrumbs'][] = $this->title;
                             
                             
                         // }else{
-                            return "";
+                         //   return "";
                       //  }
                       
 
                         
-                        },
-               'filterInputOptions' => ['placeholder' => 'Sample Type', 'testcategory_id' => 'grid-products-search-category_type_id']
-            ],
+            //             },
+            //    'filterInputOptions' => ['placeholder' => 'Sample Type', 'testcategory_id' => 'grid-products-search-category_type_id']
+         //   ],
             ['class' => 'kartik\grid\ActionColumn',
           //  'contentOptions' => ['style' => 'width: 8.7%'],
             'template' => '{view}{update}{delete}',

@@ -67,6 +67,7 @@ class CollectiontypeController extends Controller
     {
         $model = new Collectiontype();
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            Yii::$app->session->setFlash('success', 'Successfully Saved!');
             return $this->runAction('index');
         } 
         if(Yii::$app->request->isAjax){
@@ -90,6 +91,7 @@ class CollectiontypeController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            Yii::$app->session->setFlash('success', 'Successfully Updated!');
             return $this->redirect('index');
         } else {
             return $this->renderAjax('update', [

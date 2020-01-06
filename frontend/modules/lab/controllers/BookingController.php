@@ -83,7 +83,8 @@ class BookingController extends Controller
             $model->customer_id;
             
             $model->save();
-            return $this->redirect(['view', 'id' => $model->booking_id]);
+            Yii::$app->session->setFlash('success','Successfully Saved');
+            return $this->redirect(['index']);
         }
         
         return $this->renderAjax('create', [
@@ -101,7 +102,8 @@ class BookingController extends Controller
     $schedules = Booking::find()->where(['rstl_id'=>$id,'booking_status'=>0])->all(); 
  
     foreach ($schedules AS $schedule){
-        $customer =Customer::find()->where(['customer_id'=>396])->one();
+        $customer_id= $schedule->customer_id;
+        $customer =Customer::find()->where(['customer_id'=>$customer_id])->one();
         $Event= new Schedule();
         $Event->id = $schedule->booking_id;
         $Event->title =$customer->customer_name.": ".$schedule->description."\n Sample Qty:".$schedule->qty_sample;
@@ -130,10 +132,11 @@ class BookingController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->booking_id]);
+            Yii::$app->session->setFlash('success','Successfully Updated');
+            return $this->redirect(['index']);
         }
 
-        return $this->render('update', [
+        return $this->renderAjax('update', [
             'model' => $model,
         ]);
     }
@@ -148,7 +151,7 @@ class BookingController extends Controller
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
-
+        Yii::$app->session->setFlash('success','Successfully Removed!');
         return $this->redirect(['index']);
     }
 
@@ -182,4 +185,17 @@ class BookingController extends Controller
           return $next_refnumber;
      }
      
+     public function actionManage()
+     {
+        $model = new Booking();
+        $searchModel = new BookingSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->pagination->pageSize=10;
+        return $this->render('manage', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'model' => $model,
+        ]);
+         
+     }
 }

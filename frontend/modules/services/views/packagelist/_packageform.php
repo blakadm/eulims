@@ -105,13 +105,12 @@ $this->registerJs($js);
         ],
     ]); ?>
 
-
     <?php
-            $requestquery = Request::find()->where(['request_id' => 2])->one();
+            $requestquery = Request::find()->where(['request_id' => $request_id])->one();
         
             $category= ArrayHelper::map(Testcategory::find()
             ->leftJoin('tbl_lab_sampletype', 'tbl_lab_sampletype.testcategory_id=tbl_testcategory.testcategory_id')
-            ->Where(['tbl_lab_sampletype.lab_id'=>1])
+            ->Where(['tbl_lab_sampletype.lab_id'=>$labId])
             ->orderBy(['testcategory_id' => SORT_DESC])->all(),'testcategory_id','category');
         ?>
 

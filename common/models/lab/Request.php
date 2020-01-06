@@ -24,12 +24,14 @@ use yii\db\ActiveRecord;
  * @property string $total
  * @property string $report_due
  * @property string $conforme
+ * @property string $contact_num
  * @property string $receivedBy
  * @property int $created_at
  * @property int $posted
  * @property int $status_id
  * @property int $selected 
  * @property int $request_type_id
+
  *
  * @property string $position 
  * @property string $recommended_due_date 
@@ -102,11 +104,11 @@ class Request extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['request_datetime', 'rstl_id', 'lab_id', 'customer_id', 'payment_type_id', 'discount_id', 'purpose_id', 'report_due', 'conforme', 'receivedBy', 'created_at','request_type_id'], 'required'],
+            [['request_datetime', 'rstl_id', 'lab_id', 'customer_id', 'payment_type_id', 'discount_id', 'purpose_id', 'report_due', 'conforme', 'contact_num','receivedBy', 'created_at','request_type_id',], 'required'],
             [['request_datetime', 'report_due', 'recommended_due_date', 'est_date_completion', 'equipment_release_date', 'certificate_release_date'], 'safe'],
-            [['rstl_id', 'lab_id', 'customer_id', 'payment_type_id', 'discount_id', 'purpose_id', 'created_at', 'posted', 'status_id', 'selected', 'request_type_id','payment_status_id'], 'integer'],
-            [['discount', 'total'], 'number'],
-            [['request_ref_num', 'modeofrelease_ids', 'conforme', 'receivedBy'], 'string', 'max' => 50],
+            [['rstl_id', 'lab_id', 'customer_id', 'payment_type_id', 'discount_id', 'purpose_id', 'created_at', 'posted', 'status_id', 'selected', 'request_type_id','payment_status_id' ], 'integer'],
+            [['discount', 'total', ], 'number'],
+            [['request_ref_num', 'modeofrelease_ids', 'conforme', 'contact_num','receivedBy'], 'string', 'max' => 50],
             [['position', 'items_receive_by', 'released_by', 'received_by'], 'string', 'max' => 100],
             [['request_ref_num'], 'unique'],
             /*['report_due', 'compare','compareAttribute'=>'request_date','operator'=>'>=','message'=>'Report Due should not be less than the request date!', 'when' => function($model) {
@@ -132,7 +134,7 @@ class Request extends \yii\db\ActiveRecord
     {
         return [
             'request_id' => 'Request ID',
-            'request_ref_num' => 'Request Ref Num',
+            'request_ref_num' => 'Request Reference Number',
             'request_datetime' => 'Request Datetime',
             'rstl_id' => 'Rstl ID',
             'lab_id' => 'Laboratory',
@@ -147,7 +149,7 @@ class Request extends \yii\db\ActiveRecord
             'report_due' => 'Report Due',
             'conforme' => 'Conforme',
             'receivedBy' => 'Received By',
-            'created_at' => 'Created At',
+            'created_at' => 'Tracking code',
             'posted' => 'Posted',
             'status_id' => 'Status',
             //'customer_name'=>'Customer Name',
@@ -163,6 +165,7 @@ class Request extends \yii\db\ActiveRecord
             'received_by' => 'Received By',
             'payment_status_id'=>'Payment Status',
             'customer_old_id'=>'customer_old_id',
+            'contact_num'=>'Conforme Contact Number',
         ];
     }
 
@@ -289,5 +292,13 @@ class Request extends \yii\db\ActiveRecord
     public function getReferralrequest()
     {
         return $this->hasOne(ReferralRequest::className(), ['request_id' => 'request_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getRequesttype()
+    {
+        return $this->hasOne(RequestType::className(), ['request_type_id' => 'request_type_id']);
     }
 }

@@ -31,6 +31,10 @@ use yii2tech\spreadsheet\Myspreadsheet;
 use frontend\modules\reports\modules\finance\templates\Orspreadsheet;
 use frontend\modules\finance\components\models\Model;
 use common\models\lab\RequestSearch;
+use common\models\finance\ExcessPayment;
+use common\models\finance\Customerwallet;
+use common\models\finance\Customertransaction;
+
 class CashierController extends \yii\web\Controller
 {
     public function actionIndex()
@@ -194,8 +198,8 @@ class CashierController extends \yii\web\Controller
             $session = Yii::$app->session;
            
              try {
-                 
-               // $model->getDb()=$connection;
+              
+               //$model->getDb()=$connection;
                 $model->rstl_id= Yii::$app->user->identity->profile->rstl_id;//$GLOBALS['rstl_id'];
                 $model->terminal_id=$GLOBALS['terminal_id'];
                 $model->orderofpayment_id=$op_id;
@@ -217,6 +221,8 @@ class CashierController extends \yii\web\Controller
                  return $e;
              }
         }
+		
+		
             $model->deposit_type_id=1;
             $model->receiptDate=date('Y-m-d');
             $model->payment_mode_id=$op_model->payment_mode_id;
@@ -225,6 +231,7 @@ class CashierController extends \yii\web\Controller
            return $this->renderAjax('receipt/_form', [
                 'model' => $model,
                 'op_model'=> $op_model,
+				
            ]);
         }else{
             return $this->render('receipt/_form', [
@@ -260,6 +267,8 @@ class CashierController extends \yii\web\Controller
         }
         
         $check_Query = Check::find()->where(['receipt_id' => $receiptid]);
+		$check_sum=0;
+		$walletpay_sum=0;
         if($check_Query){
             $checkDataProvider = new ActiveDataProvider([
             'query' => $check_Query,
@@ -267,15 +276,22 @@ class CashierController extends \yii\web\Controller
             'pageSize' => 10,
             ],
             ]);
+			$check_sum = Check::find()->where(['receipt_id' => $receiptid])
+                 ->sum('amount');
+			$walletpay_sum= Customertransaction::find()->where(['source' => $receiptid])->sum('amount');	 
         }else{
             $checkDataProvider ="";
         }
-        
+		$customer_id=$receipt->customer_id;
+        $wallet = Customerwallet::find()->where(['customer_id'=>$customer_id])->one();
         return $this->render('receipt/view', [
             'model' => $receipt,
             'paymentitemDataProvider' => $paymentitemDataProvider,
             'check_model'=>$checkDataProvider,
             'receipt'=>$receipt,
+			'wallet'=>$wallet,
+			'check_sum'=>$check_sum,
+			'walletpay_sum'=> $walletpay_sum
         ]);
     }
     protected function findModelReceipt($id)
@@ -342,12 +358,12 @@ class CashierController extends \yii\web\Controller
         if ($model->load(Yii::$app->request->post())) {
             $session = Yii::$app->session;
             try  {
-                $model->rstl_id=$GLOBALS['rstl_id'];
+                $model->rstl_id=Yii::$app->user->identity->profile->rstl_id;
                 $model->start_or=$this->findModelReceipt($model->start_or)->or_number;
                 $model->end_or=$this->findModelReceipt($model->end_or)->or_number;
                 $model->save(false);
                 $this->update_receipt_depositid($model->start_or, $model->end_or, $model->deposit_id);
-                $session->set('savepopup',"executed");
+                 Yii::$app->session->setFlash('success', 'Successfully Created!');
                  return $this->redirect(['/finance/cashier/deposit/']);
             } catch (Exception $e) {
                 return $e;
@@ -403,7 +419,7 @@ class CashierController extends \yii\web\Controller
                         $selected = $or['receipt_id'];
                     }
                 }
-                echo Json::encode(['output' => $out, 'selected'=>$selected]);
+                echo Json::encode(['output' => $out, 'selected'=>'']);
                 return;
             }
         }
@@ -412,35 +428,35 @@ class CashierController extends \yii\web\Controller
     
     public function actionEndOr() {
         $out = [];
-        if (isset($_POST['depdrop_parents']) <> '') {
-            $id = end($_POST['depdrop_parents']);
-            $receipt=$this->findModelReceipt($id);
-             $list=(new Query)
-            ->select('receipt_id,or_number')
-            ->from('eulims_finance.tbl_receipt')
-            ->where(['deposit_type_id' => $receipt->deposit_type_id])
-            ->andWhere(['or_series_id' => $receipt->or_series_id]) 
-            ->andWhere(['deposit_id'=>null]) 
-            ->andWhere(['>=', 'or_number',$receipt->or_number])
-            ->all();
-            
-            $selected  = null;
-            if ($id != null && count($list) > 0) {
-                $selected = '';
-                foreach ($list as $i => $test) {
-                    $out[] = ['id' => $test['receipt_id'], 'name' => $test['or_number']];
-                    if ($i == 0) {
-                        $selected = $test['receipt_id'];
+        if (isset($_POST['depdrop_parents'])) {
+            $id = $_POST['depdrop_parents'];
+            $receipt_id = empty($id[0]) ? null : $id[0];
+            if($receipt_id <> null){
+                $receipt=$this->findModelReceipt($receipt_id);
+                $list=(new Query)
+                ->select('receipt_id,or_number')
+                ->from('eulims_finance.tbl_receipt')
+                ->where(['deposit_type_id' => $receipt->deposit_type_id])
+                ->andWhere(['or_series_id' => $receipt->or_series_id]) 
+                ->andWhere(['deposit_id'=>null]) 
+                ->andWhere(['>=', 'or_number',$receipt->or_number])
+                ->all();
+                
+                $selected  = null;
+                if (count($list) > 0) {
+                    $selected = '';
+                    foreach ($list as $i => $test) {
+                        $out[] = ['id' => $test['receipt_id'], 'name' => $test['or_number']];
+                        if ($i == 0) {
+                            $selected = $test['receipt_id'];
+                        }
                     }
-                }
-                echo Json::encode(['output' => $out, 'selected'=>'']);
-                return;
+                    echo Json::encode(['output' => $out, 'selected'=>'']);
+                    return;
+                }        
             }
         }
-        else{
-            echo Json::encode(['output' => '', 'selected'=>'']);
-            exit;
-        }
+        echo Json::encode(['output' => '', 'selected'=>'']);
     }
    public function actionCalculateTotalDeposit($id,$endor) {
         $total = 0;
@@ -600,20 +616,30 @@ class CashierController extends \yii\web\Controller
          $receipt=$this->findModelReceipt($receiptid);
          $customer_id=$receipt->customer_id;
          $total_collection=$receipt->total;
-         $sum = Check::find()->where(['receipt_id'=>$receiptid])->sum('amount');
+         $sum=0;
          $func= new Functions();
-         
+         $rstl_id=Yii::$app->user->identity->profile->rstl_id;
          if ($model->load(Yii::$app->request->post())) {
             $session = Yii::$app->session;
             
             try  {
                 $model->receipt_id=$receiptid;
+				$model->rstl_id=$rstl_id;
                 if($model->save()){
-                   if ($model->amount > $total_collection){
+				   $sum = Check::find()->where(['receipt_id'=>$receiptid])->sum('amount');
+                   if ($sum > $total_collection){
                        Yii::$app->session->setFlash('info','Excess amount will be credited to customer wallet!');
-                       $total= $model->amount - $total_collection;
-                       $source= "From Receipt #:".$receipt->or_number.", Check #:".$model->checknumber;
+                       $total= $sum - $total_collection;
+                      // $source= "From Receipt #:".$receipt->or_number.", Check #:".$model->checknumber;
+                       $source=$receiptid;
                        $func->SetWallet($customer_id, $total, $source,0);
+					   
+					   $model_excess = new ExcessPayment();
+					   $model_excess->receipt_id=$model->receipt_id;
+					   $model_excess->check_id=$model->check_id;
+					   $model_excess->amount=$total;
+					   $model_excess->save();
+					  
                    } 
                 }
                 // Yii::$app->session->setFlash('success','Successfully Saved!');
@@ -792,7 +818,11 @@ class CashierController extends \yii\web\Controller
                 $searchModel = new RequestSearch();
                 //$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
                 //$dataProvider->pagination->pageSize=500;
-                  $query = Request::find()->where(['not', ['posted' => 1]]);
+				  $receipt=Receipt::find()->where(['receipt_id' => $receiptid])->one();
+				  $opid=$receipt->orderofpayment_id;
+				  $op=Op::find()->where(['orderofpayment_id' => $opid])->one();
+				  $customerid=$op->customer_id;
+                  $query = Request::find()->where(['not', ['posted' => 1]])->andWhere(['customer_id' =>$customerid]);
                     $dataProvider = new ActiveDataProvider([
                         'query' => $query,
                     ]); 
@@ -917,4 +947,65 @@ class CashierController extends \yii\web\Controller
        } 
         
     }
+	
+	public function actionUsecustomerwallet($id)
+    {
+		 $func= new Functions();
+         $receipt=$this->findModelReceipt($id);
+         $customer_id=$receipt->customer_id;
+         $total_collection=$receipt->total;
+		 $check_sum = Check::find()->where(['receipt_id'=>$id])->sum('amount');
+		 $totaldue=$total_collection - $check_sum;
+		 $wallet=Customerwallet::find()->where(['customer_id'=>$customer_id])->sum('balance');
+		 $total=0;
+		 
+		 if($wallet >= $totaldue){
+			$func->SetWallet($customer_id, $totaldue, $id,1); 
+			Yii::$app->session->setFlash('info','Transaction Saved!');
+            return $this->redirect(['/finance/cashier/viewreceipt', 'receiptid' => $id]);
+		 } 
+    }
+	
+	public function actionUpdate($id)
+    {
+       
+		 $model=$this->findModelReceipt($id);	
+		  if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            Yii::$app->session->setFlash('success','Successfully updated!');
+            return $this->redirect(['/finance/cashier/viewreceipt', 'receiptid' => $id]);
+          }
+          if($model->orderofpayment_id == 0 || $model->orderofpayment_id == NULL){
+            $op_model ="";
+          }
+          else{
+            $op_model=$this->findModel($model->orderofpayment_id); 
+          }
+        return $this->renderAjax('receipt/update', [
+            'model' => $model,
+            'op_model'=> $op_model,
+        ]);
+    }
+    
+    public function actionRemovePaymentitem($paymentitemid)
+    {
+        $model = $this->findModelPaymentitem($paymentitemid);
+        $session = Yii::$app->session;
+       
+        if($model->delete()) {
+            Yii::$app->session->setFlash('success','Successfully Removed!');
+            return $this->redirect(['/finance/cashier/viewreceipt?receiptid='.$model->receipt_id]);
+        }else {
+            return $model->error();
+        }
+    }
+
+    protected function findModelPaymentitem($paymentitemid)
+   {
+       if (($model = Paymentitem::findOne($paymentitemid)) !== null) {
+           return $model;
+       } else {
+           throw new NotFoundHttpException('The requested page does not exist.');
+       }
+   }
+    
 }

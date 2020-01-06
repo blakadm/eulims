@@ -40,6 +40,7 @@ use common\models\system\Profile;
         'dataProvider' => $analysisdataprovider,
         'id'=>'analysis-grid',
         'pjax' => true,
+        'toolbar' => false,
         'pjaxSettings' => ['options' => ['id' => 'kv-pjax-container-analysis']],
             'pjaxSettings' => [
                 'options' => [
@@ -55,7 +56,7 @@ use common\models\system\Profile;
                         'value' => function($model) {
                             return "<b>".$model->testname."</b>";
                         },
-                        'contentOptions' => ['style' => 'width:10%; white-space: normal;'],                 
+                        'contentOptions' => ['style' => 'width:20%; white-space: normal;'],                 
                     ],
                     [
                         'header'=>'Method',
@@ -72,54 +73,59 @@ use common\models\system\Profile;
                         'enableSorting' => false,
                         'value'=> function ($model){
                            
-                                $tagging = Tagging::find()->where(['cancelled_by'=> $model->analysis_id])->one(); 
-                                if ($tagging)
-                                {
-                                $profile= Profile::find()->where(['user_id'=> $tagging->user_id])->one();
-                                    if ($profile){
-                                        return $profile->firstname.' '. strtoupper(substr($profile->middleinitial,0,1)).'. '.$profile->lastname;
-                                    }else{
-                                        return '';
-                                    }
+                                // $tagging = Tagging::find()->where(['cancelled_by'=> $model->analysis_id])->one(); 
+                                // if ($tagging)
+                                // {
+                                // $profile= Profile::find()->where(['user_id'=> $tagging->user_id])->one();
+                                //     if ($profile){
+                                //         return $profile->firstname.' '. strtoupper(substr($profile->middleinitial,0,1)).'. '.$profile->lastname;
+                                //     }else{
+                                //         return '';
+                                //     }
                                     
+                                // }else{
+                                //     return '';
+                                // }
+                                if ($model->tagging){
+                                    $profile= Profile::find()->where(['user_id'=> $model->tagging->user_id])->one();
+                                    return $profile->firstname.' '. strtoupper(substr($profile->middleinitial,0,1)).'. '.$profile->lastname;
                                 }else{
-                                    return '';
+                                    return "";
                                 }
-                               
                         
                            
                         },
-                        'contentOptions' => ['style' => 'width:10%; white-space: normal;'],                   
+                        'contentOptions' => ['style' => 'width:20%; white-space: normal;'],                   
                     ],
-                    [
-                        'header'=>'Progress',
-                        'hAlign'=>'center',
-                        'format' => 'raw',
-                        'enableSorting' => false,
-                        'value'=> function ($model){
-                            $analysis = Analysis::findOne(['analysis_id' => $model->analysis_id]);
-                            $modelmethod=  Methodreference::findOne(['method'=>$analysis->method]);                              
-                            $testnamemethod = Testnamemethod::findOne(['testname_id'=>$analysis->test_id, 'method_id'=>$analysis->testcategory_id]);                           
-                            if ($testnamemethod){
-                                $count = Workflow::find()->where(['testname_method_id'=>$testnamemethod->testname_method_id])->count();     
+                    // [
+                    //     'header'=>'Progress',
+                    //     'hAlign'=>'center',
+                    //     'format' => 'raw',
+                    //     'enableSorting' => false,
+                    //     'value'=> function ($model){
+                    //         $analysis = Analysis::findOne(['analysis_id' => $model->analysis_id]);
+                    //         $modelmethod=  Methodreference::findOne(['method'=>$analysis->method]);                              
+                    //         $testnamemethod = Testnamemethod::findOne(['testname_id'=>$analysis->test_id, 'method_id'=>$analysis->testcategory_id]);                           
+                    //         if ($testnamemethod){
+                    //             $count = Workflow::find()->where(['testname_method_id'=>$testnamemethod->testname_method_id])->count();     
                                 
                               
-                                if ($count==0){
-                                    return $analysis->completed.'/'.$count;
-                                }else{
-                                    $percent = $analysis->completed / $count * 100;
-                                    $formattedNum = number_format($percent);
+                    //             if ($count==0){
+                    //                 return $analysis->completed.'/'.$count;
+                    //             }else{
+                    //                 $percent = $analysis->completed / $count * 100;
+                    //                 $formattedNum = number_format($percent);
                                     
-                                    return $analysis->completed.'/'.$count." = ".$formattedNum."%";  
-                                }
-                            }else{
-                                return "";
-                            }
+                    //                 return $analysis->completed.'/'.$count." = ".$formattedNum."%";  
+                    //             }
+                    //         }else{
+                    //             return "";
+                    //         }
                             
                                            
-                        },
-                        'contentOptions' => ['style' => 'width:8%; white-space: normal;'],                   
-                    ],
+                    //     },
+                    //     'contentOptions' => ['style' => 'width:8%; white-space: normal;'],                   
+                    // ],
                 //     // [
                 //     //     'header'=>'Cycle Time',
                 //     //     'format' => 'raw',
@@ -135,34 +141,57 @@ use common\models\system\Profile;
                           'hAlign'=>'center',
                           'format'=>'raw',
                           'value' => function($model) {
-                            $analysis = Analysis::findOne(['analysis_id' => $model->analysis_id]);
-                            $modelmethod=  Methodreference::findOne(['method'=>$analysis->method]);    
+                            // $analysis = Analysis::findOne(['analysis_id' => $model->analysis_id]);
+                            // $modelmethod=  Methodreference::findOne(['method'=>$analysis->method]);    
                                                       
-                            $testnamemethod = Testnamemethod::findOne(['testname_id'=>$analysis->test_id, 'method_id'=>$analysis->testcategory_id]);                           
+                            // $testnamemethod = Testnamemethod::findOne(['testname_id'=>$analysis->test_id, 'method_id'=>$analysis->testcategory_id]);                           
                             
-                            if ($testnamemethod){
-                                $count = Workflow::find()->where(['testname_method_id'=>$testnamemethod->testname_method_id])->count();     
+                            // if ($testnamemethod){
+                            //     $count = Workflow::find()->where(['testname_method_id'=>$testnamemethod->testname_method_id])->count();     
                                 
                              
-                                 if ($analysis->completed==0) {
-                                    return "<span class='badge btn-default' style='width:90px;height:20px'>PENDING</span>";
-                                    }else if ($analysis->completed==$count) {
-                                        return "<span class='badge btn-success' style='width:90px;height:20px'>COMPLETED</span>";            
-                                    }
-                                    else if ($analysis->completed>=1) {
-                                        return "<span class='badge btn-primary' style='width:90px;height:20px'>ONGOING</span>";
-                                    }
-                                    else if ($analysis->completed==0) {
+                            //      if ($analysis->completed==0) {
+                            //         return "<span class='badge btn-default' style='width:90px;height:20px'>PENDING</span>";
+                            //         }else if ($analysis->completed==$count) {
+                            //             return "<span class='badge btn-success' style='width:90px;height:20px'>COMPLETED</span>";            
+                            //         }
+                            //         else if ($analysis->completed>=1) {
+                            //             return "<span class='badge btn-primary' style='width:90px;height:20px'>ONGOING</span>";
+                            //         }
+                            //         else if ($analysis->completed==0) {
                                         
-                                    }   
-                            }else{
-                                return "<span class='badge btn-default' style='width:90px;height:20px'>PENDING</span>";
-                            }
+                        //        }   
+                       //     }
+                            // else {
+                            //     return "<span class='badge btn-default' style='width:90px;height:20px'>PENDING</span>";
+                          //  }
                            
                                 
-                          },
-                          'enableSorting' => false,
-                          'contentOptions' => ['style' => 'width:5%; white-space: normal;'],
+                        //  },
+                        //   'enableSorting' => false,
+                        //   'contentOptions' => ['style' => 'width:5%; white-space: normal;'],
+
+                        if ($model->tagging){
+
+                            if ($model->tagging->tagging_status_id==1) {
+                                   return "<span class='badge btn-primary' style='width:90px;height:20px'>ONGOING</span>";
+                               }else if ($model->tagging->tagging_status_id==2) {
+                                   return "<span class='badge btn-success' style='width:90px;height:20px'>COMPLETED</span>";
+                               }
+                               else if ($model->tagging->tagging_status_id==3) {
+                                   return "<span class='badge btn-warning' style='width:90px;height:20px'>ASSIGNED</span>";
+                               }
+                               else if ($model->tagging->tagging_status_id==4) {
+                                   return "<span class='badge btn-danger' style='width:90px;height:20px'>CANCELLED</span>";
+                               }
+                                
+                         
+                           }else{
+                               return "<span class='badge btn-default' style='width:80px;height:20px'>PENDING</span>";
+                           }
+
+
+                            }
                       ],
                     [
                         'header'=>'Remarks',

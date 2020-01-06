@@ -52,7 +52,7 @@ class OpSearch extends Op
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'sort'=> ['defaultOrder' => ['transactionnum'=>SORT_DESC]],
+            'sort'=> ['defaultOrder' => ['orderofpayment_id'=>SORT_DESC]],
         ]);
 
         $this->load($params);

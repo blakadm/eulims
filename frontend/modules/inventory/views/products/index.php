@@ -11,6 +11,7 @@ use yii\helpers\ArrayHelper;
 use yii\bootstrap\Modal;
 use yii\helpers\Url;
 use common\models\inventory\Categorytype;
+use common\models\inventory\Cost;
 
 $this->title = 'Products';
 $this->params['breadcrumbs'][] = $this->title;
@@ -72,28 +73,33 @@ Modal::end();
         ],            
         'product_code',
         'product_name',
-        // 'description:ntext',
-        [
-            'header'=>'Reorder Point',
-            'value'=>function($model){
-                return $model->qty_reorder;
-            }
-        ],
         [
             'header'=>'Unit',
             'value'=>function($model){
                 return $model->unittype->unit;
             }
         ],
-        // 'srp',
-        // 'qty_onhand',
-        // 'qty_per_unit',
-        // 'discontinued:boolean',
+        [
+            "label" => "Source of Fund",
+            "format" => 'raw',
+            "value" => function($model){
+                if($model->producttype_id==2){
+                        $cost = Cost::find()->where(["product_id"=>$model->product_id])->one();
+                        if($cost)
+                            return Html::button('<span class="glyphicon glyphicon-eye"></span>'.$cost->fundings->name, ['value'=>'/inventory/cost/view?id='.$model->product_id, 'class' => 'btn btn-success','title' => Yii::t('app', "Fund Details"),'id'=>'btnSupplier','onclick'=>'showBonus(this.value,this.title)']);
+                        else
+                            return Html::button('<span class="glyphicon glyphicon-plus"></span> Add details', ['value'=>'/inventory/cost/create?prod_id='.$model->product_id, 'class' => 'btn btn-success btn-small','title' => Yii::t('app', "Fund Details"),'id'=>'btnSupplier','onclick'=>'showBonus(this.value,this.title)']);    
+                }else{
+                    return "N/A";
+                }
+                
+            },
+        ],
         [
             "label" => "Suppliers",
             "format" => 'raw',
             "value" => function($model){
-                return Html::button('<span class="glyphicon glyphicon-eye"></span> Suppliers', ['value'=>'/inventory/products/supplier?ids='.$model->suppliers_ids, 'class' => 'btn btn-success','title' => Yii::t('app', "List of Supplier(s)"),'id'=>'btnSupplier','onclick'=>'showBonus(this.value,this.title)']);
+                return Html::button('<span class="glyphicon glyphicon-eye"></span> Suppliers', ['value'=>'/inventory/products/supplier?ids='.$model->suppliers_ids, 'class' => 'btn btn-success','title' => Yii::t('app',"List of Supplier(s)"),'id'=>'btnSupplier','onclick'=>'showBonus(this.value,this.title)']);
             }
         ],
         [
@@ -101,11 +107,11 @@ Modal::end();
             'template' => $Button,
             'buttons' => [
                 'update' => function ($url, $model) {
-                     return Html::button('<span class="glyphicon glyphicon-pencil"></span>', ['value'=>'/inventory/products/update?id=' . $model->product_id, 'class' => 'btn btn-success','title' => Yii::t('app', "Update Product"),'id'=>'btnProd','onclick'=>'addProduct(this.value,this.title)']);
+                     return Html::button('<span class="glyphicon glyphicon-pencil"></span>', ['value'=>'/inventory/products/update?id=' . $model->product_id, 'class' => 'btn btn-small btn-success','title' => Yii::t('app', "Update Product"),'id'=>'btnProd','onclick'=>'addProduct(this.value,this.title)']);
                      
                 },
                 'sds' => function($url, $model){
-                     return Html::button('<span class="glyphicon glyphicon-file"></span>', ['value'=>'/inventory/products/viewsds?id='.$model->product_id, 'class' => 'btn btn-primary','title' => Yii::t('app', "Safety Data Sheet"),'id'=>'btnSupplier','onclick'=>'showBonus(this.value,this.title)']);       
+                     return Html::button('<span class="glyphicon glyphicon-file"></span>', ['value'=>'/inventory/products/viewsds?id='.$model->product_id, 'class' => 'btn btn-small btn-primary','title' => Yii::t('app', "Safety Data Sheet"),'id'=>'btnSupplier','onclick'=>'showBonus(this.value,this.title)']);       
                 }
             ],
             

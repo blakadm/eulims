@@ -70,7 +70,9 @@ class SuppliersController extends Controller
         $model = new Suppliers();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->suppliers_id]);
+            // return $this->redirect(['view', 'id' => $model->suppliers_id]);
+            Yii::$app->session->setFlash('success', 'New Supplier Successfully Added!');
+            return $this->redirect(['index']);
         }
 
         return $this->renderAjax('create', [

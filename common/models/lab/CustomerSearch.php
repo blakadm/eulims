@@ -47,7 +47,7 @@ class CustomerSearch extends Customer
         // add conditions that should always apply here
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'sort'=>['defaultOrder' => ['customer_name'=>SORT_ASC]],
+            'sort'=>['defaultOrder' => ['customer_id'=>SORT_DESC]],
             'pagination' => [
               'pageSize' => 10,
             ],

@@ -41,7 +41,7 @@ $Header.="Deposit";
             ]
         ],
         'panel' => [
-                'type'=>'primary', 'before'=>Html::button('<i class="glyphicon glyphicon-plus"></i> Create Deposit', ['value' => Url::to(['add-deposit']),'title'=>'Create Deposit', 'onclick'=>'addDeposit(this.value,this.title)', 'class' => 'btn btn-success','id' => 'modalBtn']),
+                'type'=>'primary', 'before'=>Html::button('<i class="glyphicon glyphicon-plus"></i> Create Deposit', ['value' => Url::to(['add-deposit']),'title'=>'Create Deposit','onclick'=>'LoadModal(this.title, this.value);', 'class' => 'btn btn-success','id' => 'modalBtn']),
                 'heading' => '<span class="glyphicon glyphicon-book"></span>  ' . Html::encode($this->title),
                 
         ],
@@ -116,43 +116,3 @@ $Header.="Deposit";
      
   </div>
 </div>
-<?php
-    // This section will allow to popup a notification
-    $session = Yii::$app->session;
-    if ($session->isActive) {
-        $session->open();
-        if (isset($session['deletepopup'])) {
-            $func->CrudAlert("Deleted Successfully","WARNING");
-            unset($session['deletepopup']);
-            $session->close();
-        }
-        if (isset($session['updatepopup'])) {
-            $func->CrudAlert("Updated Successfully");
-            unset($session['updatepopup']);
-            $session->close();
-        }
-        if (isset($session['savepopup'])) {
-            $func->CrudAlert("Successfully Saved","SUCCESS",true);
-            unset($session['savepopup']);
-            $session->close();
-        }
-        if (isset($session['errorpopup'])) {
-            $func->CrudAlert("Transaction Error","ERROR",true);
-            unset($session['errorpopup']);
-            $session->close();
-        }
-        if (isset($session['checkpopup'])) {
-            $func->CrudAlert("Insufficient Wallet Balance","INFO",true,false,false);
-            unset($session['checkpopup']);
-            $session->close();
-        }
-    }
-    ?>
-<script type="text/javascript">
- function addDeposit(url,title){
-     $(".modal-title").html(title);
-     $('#modal').modal('show')
-            .find('#modalContent')
-            .load(url);
-    }
-</script>

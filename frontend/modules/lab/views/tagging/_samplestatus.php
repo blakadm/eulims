@@ -37,15 +37,28 @@ $samples_count= Sample::find()
 ->where(['tbl_request.request_id'=>$request->request_id ])
 ->all();  
 
-$requestcount= Sample::find()
-->leftJoin('tbl_request', 'tbl_sample.request_id=tbl_request.request_id')
+$sampletagged= Sample::find()
 ->leftJoin('tbl_analysis', 'tbl_sample.sample_id=tbl_analysis.sample_id')
-->leftJoin('tbl_tagging_analysis', 'tbl_analysis.analysis_id=tbl_tagging_analysis.cancelled_by')
-->where(['tbl_tagging_analysis.tagging_status_id'=>2, 'tbl_request.request_id'=>$request->request_id ])   
+->leftJoin('tbl_tagging', 'tbl_analysis.analysis_id=tbl_tagging.analysis_id') 
+->leftJoin('tbl_request', 'tbl_request.request_id=tbl_analysis.request_id')    
+->where(['tbl_tagging.tagging_status_id'=>2, 'tbl_request.request_id'=>$request->request_id ])
 ->all();  
+//$st = count($sampletagged);
+// $requestcount= Sample::find()
+// ->leftJoin('tbl_request', 'tbl_sample.request_id=tbl_request.request_id')
+// ->leftJoin('tbl_analysis', 'tbl_sample.sample_id=tbl_analysis.sample_id')
+// ->leftJoin('tbl_tagging', 'tbl_analysis.analysis_id=tbl_tagging.cancelled_by')
+// ->where(['tbl_tagging.tagging_status_id'=>2, 'tbl_request.request_id'=>$request->request_id ])   
+// ->all();  
+
+// $requestcount= Request::find()
+// ->where(['tbl_request.request_id'=>$request->request_id ]) 
+// ->all();  
 
 $scount = count($samples_count); 
-$rcount = count($requestcount); 
+$rcount = count($sampletagged); 
+
+//echo $rcount."<br>".$scount."<br>";
 
 if ($rcount==0){
     echo "<span class='payment alert-default' style='float:right; min-width:80px; min-height:30px; line-height:30px;text-align:center;display:inline-block;font-weight:bold;'>PENDING</span><br><br>";
@@ -244,7 +257,9 @@ if ($rcount==0){
             echo GridView::widget([
                 'id'=>'testname-grid',
                 'dataProvider' => $sampledataprovider,
+                'toolbar' => false,
                 'pjax'=>true,
+                
                 'pjaxSettings' => [
                     'options' => [
                         'enablePushState' => false,

@@ -60,7 +60,7 @@ class SampleregisterController extends Controller
 
         $searchModel = new SampleregisterSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->get());
-        //$dataProvider->setPagination(['pageSize' => 10]);
+        
         $dataProvider->pagination->pageSize=10;
 
         return $this->render('index', [

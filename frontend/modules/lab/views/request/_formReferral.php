@@ -99,7 +99,7 @@ $sameLab = !empty($model->lab_id) ? $model->lab_id : 0;
     </div>
     <div class="col-md-6">
     <?= $form->field($model, 'sample_received_date')->widget(DateTimePicker::classname(), [
-        'readonly'=>true,
+        //'readonly'=>true,
         'disabled' => $disabled,
     'options' => ['placeholder' => 'Enter Date'],
         'value'=>function($model){

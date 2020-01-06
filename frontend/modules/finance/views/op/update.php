@@ -26,6 +26,8 @@ $this->params['breadcrumbs'][] = 'Update';
         'dataProvider'=>$dataProvider,
         'request_model'=>$paymentitem_model,
         'status' => 1,
+        'collection_type' => $collection_type,
+        'customers' => $customers
           ]);
    // }
     

@@ -88,7 +88,7 @@ class InventoryEntries extends \yii\db\ActiveRecord
             'expiration_date' => 'Expiration Date',
             'created_by' => 'Created By',
             'suppliers_id' => 'Suppliers ID',
-            'po_number' => 'Po Number',
+            'po_number' => 'PO/Lot Number',
             'quantity_onhand'=>'Quantity Onhand',
             'quantity' => 'Quantity',
             'content' => 'Content',

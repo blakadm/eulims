@@ -4,7 +4,7 @@ use common\models\system\Package;
 use common\models\system\PackageDetails;
 use yii\helpers\Url;
 use yii\helpers\Html;
-
+$unseen = '';
 $Packages= Package::find()->all();
 
 $Request_URI=$_SERVER['REQUEST_URI'];
@@ -38,12 +38,12 @@ if(Yii::$app->user->isGuest){
        $UsernameDesignation=$CurrentUserName.'<br>'.$CurrentUserDesignation;
     }
   
-	$unresponded_notification = json_decode(Yii::$app->runAction('/referrals/notification/count_unresponded_notification'),true);
+	/*$unresponded_notification = json_decode(Yii::$app->runAction('/referrals/notification/count_unresponded_notification'),true);
 	$unresponded = $unresponded_notification['num_notification'] > 0 ? $unresponded_notification['num_notification'] : ''; //no display if 0
 	
-	$unseen_bid_notification = json_decode(Yii::$app->runAction('/referrals/bidnotification/count_unseen_bidnotification'),true);
-	$unseen = $unseen_bid_notification['bid_notification'] > 0 ? $unseen_bid_notification['bid_notification'] : '';
-  
+	 $unseen_bid_notification = json_decode(Yii::$app->runAction('/referrals/bidnotification/count_unseen_bidnotification'),true);
+	 $unseen = $unseen_bid_notification['bid_notification'] > 0 ? $unseen_bid_notification['bid_notification'] : '';
+  */
     //notification will run if the user is already logged in
 	$this->registerJs("
 		setInterval(function(e){
@@ -71,7 +71,14 @@ if(Yii::$app->user->isGuest){
                             $imagename = "no-image.png";
                         }else{
                             $CurrentUser = User::findOne(['user_id'=> Yii::$app->user->identity->user_id]);
-                            $imagename = $CurrentUser->profile->image_url;
+                        
+                                $imagename = $CurrentUser->profile->image_url;
+                           
+                             if ($imagename){
+                                $imagename = $CurrentUser->profile->image_url;
+                            }else{
+                                $imagename = "no-image.png";
+                            }
                         }
                      ?>  
                          <?= Html::img("/uploads/user/photo/".$imagename, [ 
@@ -112,7 +119,9 @@ if(Yii::$app->user->isGuest){
                 //'url'=>["/".strtolower($Item->PackageName)],
                 'visible'=>true
             ];
-            $unresponded=""; //comment this
+            $unresponded = '';
+	        $unseen = '';
+            //$unresponded=""; //comment this
             //$ItemSubMenu[]=[];
             foreach ($MenuItems as $MenuItem => $mItem){
                 $icon=substr($mItem->icon,6,strlen($mItem->icon)-6);
@@ -122,7 +131,7 @@ if(Yii::$app->user->isGuest){
 				if($mItem->extra_element == 1){
 					$numNotification = '&nbsp;&nbsp;<span class="label label-danger" id="count_noti_sub_referral">'.$unresponded.'</span>';
 					$showURL = '#';
-					$template = '<a href="{url}" onclick="showNotifications()" id="btn_unresponded">{label}</a>';
+					$template = '<a href="{url}" onclick="showNotifications()" id="btn_unresponded_referral">{label}</a>';
 				} elseif ($mItem->extra_element == 2) {
 					$numNotification = '&nbsp;&nbsp;<span class="label label-danger" id="count_noti_sub_bid">'.$unseen.'</span>';
 					$showURL = '#';
@@ -145,11 +154,11 @@ if(Yii::$app->user->isGuest){
 			if($unresponded > 0 && $unseen > 0){
             	$all_notification = $unresponded + $unseen;
             } elseif($unresponded > 0 && $unseen == ''){
-            	$all_notification = $unresponded;
+             	$all_notification = $unresponded;
             } elseif($unresponded == '' && $unseen > 0){
-            	$all_notification = $unseen;
+           	$all_notification = $unseen;
             } else {
-             	$all_notification = '';
+              	$all_notification = '';
             }
 			
             $MainIcon=substr($Item->icon,6,strlen($Item->icon)-6);
@@ -162,7 +171,7 @@ if(Yii::$app->user->isGuest){
                 'items'=>$ItemSubMenu,
                 'visible'=>Yii::$app->user->can($modulePermission)
             ]; 
-            unset($ItemSubMenu);
+             unset($ItemSubMenu);
         }
         // Fixed Sub Menu Item
         $SubItem=[
@@ -199,7 +208,8 @@ if(Yii::$app->user->isGuest){
         ];
         array_push($ItemMenu, $SubItem);
         ?>
-         <?php echo dmstr\widgets\Menu::widget(
+         <?php 
+         echo dmstr\widgets\Menu::widget(
             [
                 'options' => ['class' => 'sidebar-menu tree', 'data-widget'=> 'tree'],
                 'items' => $ItemMenu,
@@ -230,6 +240,8 @@ if(Yii::$app->user->isGuest){
 				$('.content-image-loader').addClass('content-img-loader');
 			}
 		});
+
+        return false;
 	}
 	//bid notifications
 	function showBidNotifications(){
@@ -250,6 +262,8 @@ if(Yii::$app->user->isGuest){
 				$('.content-image-loader').addClass('content-img-loader');
 			}
 		});
+
+        return false;
 	}
 	$("#btn_unresponded_referral").on('click', function(e) {
 		e.preventDefault();

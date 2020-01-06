@@ -67,7 +67,6 @@ $this->registerJs($js, $this::POS_READY);
 
 
 
-
 </body>
 </html>
 

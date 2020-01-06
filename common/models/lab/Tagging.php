@@ -17,6 +17,7 @@ use Yii;
  * @property string $reason
  * @property integer $cancelled_by
  * @property string $disposed_date
+ * @property string $manner
  * @property integer $iso_accredited
  *
  * @property Analysis $analysis
@@ -72,6 +73,7 @@ class Tagging extends \yii\db\ActiveRecord
             'cancelled_by' => 'Cancelled By',
             'disposed_date' => 'Disposed Date',
             'iso_accredited' => 'Iso Accredited',
+            'manner' => 'Manner of Disposal',
         ];
     }
 

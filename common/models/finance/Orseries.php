@@ -56,11 +56,11 @@ class Orseries extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'or_series_id' => 'Or Series ID',
-            'or_category_id' => 'Or Category ID',
+            'or_series_id' => 'O.R Series ID',
+            'or_category_id' => 'O.R Category',
             'terminal_id' => 'Terminal ID',
             'rstl_id' => 'Rstl ID',
-            'or_series_name' => 'Or Series Name',
+            'or_series_name' => 'O.R Series Name',
             'startor' => 'Startor',
             'nextor' => 'Nextor',
             'endor' => 'Endor',

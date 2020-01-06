@@ -29,7 +29,7 @@ $lablist= ArrayHelper::map(Lab::find()->all(),'lab_id','labname');
         'panel' => [
                 'type' => GridView::TYPE_PRIMARY,
                 'heading' => '<span class="glyphicon glyphicon-book"></span>  ' . Html::encode($this->title),
-                'before'=> Html::button('<span class="glyphicon glyphicon-plus"></span> Create Sample Type', ['value'=>'/lab/sampletype/create', 'class' => 'btn btn-success modal_services','title' => Yii::t('app', "Create New Sample Type")]),
+                //'before'=> Html::button('<span class="glyphicon glyphicon-plus"></span> Create Sample Type', ['value'=>'/lab/sampletype/create', 'class' => 'btn btn-success modal_services','title' => Yii::t('app', "Create New Sample Type")]),
             ],
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
@@ -49,22 +49,22 @@ $lablist= ArrayHelper::map(Lab::find()->all(),'lab_id','labname');
                     
                 },
             ],
-            ['class' => 'kartik\grid\ActionColumn',
-            'contentOptions' => ['style' => 'width: 8.7%'],
-            'template' => '{view}{update}{delete}',
-            'buttons'=>[
-                'view'=>function ($url, $model) {
-                    return Html::button('<span class="glyphicon glyphicon-eye-open"></span>', ['value'=>Url::to(['/lab/sampletype/view','id'=>$model->sampletype_id]), 'onclick'=>'LoadModal(this.title, this.value);', 'class' => 'btn btn-primary','title' => Yii::t('app', "View Sample Type")]);
-                },
-                'update'=>function ($url, $model) {
-                    return Html::button('<span class="glyphicon glyphicon-pencil"></span>', ['value'=>Url::to(['/lab/sampletype/update','id'=>$model->sampletype_id]),'onclick'=>'LoadModal(this.title, this.value);', 'class' => 'btn btn-success','title' => Yii::t('app', "Update Sample Type")]);
-                },
-                'delete'=>function ($url, $model) {
-                    $urls = '/lab/sampletype/delete?id='.$model->sampletype_id;
-                    return Html::a('<span class="glyphicon glyphicon-trash"></span>', $urls,['data-confirm'=>"Are you sure you want to delete this record?<b></b>", 'data-method'=>'post', 'class'=>'btn btn-danger','title'=>'Delete Sample Type','data-pjax'=>'0']);
-                },
-            ],
-        ],
+        //     ['class' => 'kartik\grid\ActionColumn',
+        //     'contentOptions' => ['style' => 'width: 8.7%'],
+        //     'template' => '{view}{update}{delete}',
+        //     'buttons'=>[
+        //         'view'=>function ($url, $model) {
+        //             return Html::button('<span class="glyphicon glyphicon-eye-open"></span>', ['value'=>Url::to(['/lab/sampletype/view','id'=>$model->sampletype_id]), 'onclick'=>'LoadModal(this.title, this.value);', 'class' => 'btn btn-primary','title' => Yii::t('app', "View Sample Type")]);
+        //         },
+        //         'update'=>function ($url, $model) {
+        //             return Html::button('<span class="glyphicon glyphicon-pencil"></span>', ['value'=>Url::to(['/lab/sampletype/update','id'=>$model->sampletype_id]),'onclick'=>'LoadModal(this.title, this.value);', 'class' => 'btn btn-success','title' => Yii::t('app', "Update Sample Type")]);
+        //         },
+        //         'delete'=>function ($url, $model) {
+        //             $urls = '/lab/sampletype/delete?id='.$model->sampletype_id;
+        //             return Html::a('<span class="glyphicon glyphicon-trash"></span>', $urls,['data-confirm'=>"Are you sure you want to delete this record?<b></b>", 'data-method'=>'post', 'class'=>'btn btn-danger','title'=>'Delete Sample Type','data-pjax'=>'0']);
+        //         },
+        //     ],
+        // ],
         ],
     ]); ?>
 </div>

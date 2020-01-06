@@ -64,67 +64,10 @@ $url ='/finance/cashier/add-check';
         </div>
     </div>
     <?php ActiveForm::end(); ?>
- <?php
-    // This section will allow to popup a notification
-    $session = Yii::$app->session;
-    if ($session->isActive) {
-        $session->open();
-        if (isset($session['deletepopup'])) {
-            $func->CrudAlert("Deleted Successfully","WARNING");
-            unset($session['deletepopup']);
-            $session->close();
-        }
-        if (isset($session['updatepopup'])) {
-            $func->CrudAlert("Updated Successfully");
-            unset($session['updatepopup']);
-            $session->close();
-        }
-        if (isset($session['savepopup'])) {
-            $func->CrudAlert("Successfully Saved","SUCCESS",true);
-            unset($session['savepopup']);
-            $session->close();
-        }
-        if (isset($session['errorpopup'])) {
-            $func->CrudAlert("Transaction Error","ERROR",true);
-            unset($session['errorpopup']);
-            $session->close();
-        }
-        if (isset($session['checkpopup'])) {
-            $func->CrudAlert("Insufficient Wallet Balance","INFO",true,false,false);
-            unset($session['checkpopup']);
-            $session->close();
-        }
-    }
-?>
+
 </div>
 <style>
     .modal-body{
         padding-top: 0px!important;
     }
 </style>
-<!--<script type="text/javascript">
-    $('#createcheck').on('click',function(e) {
-        amount=$('#check-amount').val();
-        collection=<?php //echo $total_collection ?>;
-    
-        total= amount;
-        if(total > collection)(
-            var hi= confirm("Do you really want me to say hi?");
-            if (hi== true){
-                alert("hi");
-            }else{
-                alert("Meany!!!");
-            }
-        }
-//        if(total > collection)(
-//            var x =confirm('Excess amount will be credited to Customer Wallet.Proceed?');
-//            if (x== true){
-//                alert("hi");
-//            }else{
-//                alert("Meany!!!");
-//            }
-//        }
-       
-        
-    });
-</script>-->

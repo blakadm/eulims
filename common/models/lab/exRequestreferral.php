@@ -18,6 +18,7 @@ class exRequestreferral extends Request{
 	public $customer_name;
     public $modeofreleaseids;
     public $request_date;
+    public $sampletype_id;
 	
 	/**
      * {@inheritdoc}

@@ -33,7 +33,7 @@ $Header.="Bank Account";
         ],
         'panel' => [
                 'type' => GridView::TYPE_PRIMARY,
-                'before'=>Html::button('<span class="glyphicon glyphicon-plus"></span> Create Bank Account', ['value'=>'/finance/bankaccount/create', 'class' => 'btn btn-success','title' => Yii::t('app', "Create New Bank account"),'id'=>'btnBankaccount','onclick'=>'addBankaccount(this.value,this.title)']),
+                'before'=>Html::button('<span class="glyphicon glyphicon-plus"></span> Create Bank Account', ['value'=>'/finance/bankaccount/create', 'class' => 'btn btn-success','title' => Yii::t('app', "Create New Bank account"),'id'=>'btnBankaccount','onclick'=>'LoadModal(this.title, this.value);']),
                 'heading' => '<span class="glyphicon glyphicon-book"></span>  ' . Html::encode($this->title),
             ],
         'exportConfig'=>$func->exportConfig("Bank Account", "ba", $Header),
@@ -46,8 +46,8 @@ $Header.="Bank Account";
                 'template' => $Buttontemplate,
                 'buttons'=>[
                     'update'=>function ($url,$model) {
-                        $t = '/finance/bankaccount/update?id='.$model->bankaccount_id;
-                        return Html::button('<span class="glyphicon glyphicon-pencil"></span>', ['value'=>Url::to($t),'class' => 'btn btn-success btn-modal']);
+						return Html::button('<span class="glyphicon glyphicon-pencil"></span>', ['value'=>Url::to(['/finance/bankaccount/update','id'=>$model->bankaccount_id]), 'onclick'=>'LoadModal(this.title, this.value);', 'class' => 'btn btn-primary','title' => Yii::t('app', "Update")]);
+
                     },
                 ]
             ],
@@ -55,15 +55,3 @@ $Header.="Bank Account";
        
     ]); ?>
 </div>
-<script type="text/javascript">
-    $('#btnBankaccount').click(function(){
-        $('.modal-title').html($(this).attr('title'));
-        $('#modal').modal('show')
-            .find('#modalContent')
-            .load($(this).attr('value'));
-    });
-    function addBankaccount(url,title){
-        LoadModal(title,url,'true','700px');
-    }
-  
-</script>

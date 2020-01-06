@@ -51,7 +51,7 @@ $disable='';
            <?php 
 
                 echo $form->field($model, 'collectiontype_id')->widget(Select2::classname(), [
-                'data' => ArrayHelper::map(Collectiontype::find()->all(), 'collectiontype_id', 'natureofcollection'),
+                'data' => $collection_type,
                 'theme' => Select2::THEME_BOOTSTRAP,
                 'options' => ['placeholder' => 'Select Collection Type ...'],
                 'pluginOptions' => [
@@ -87,63 +87,115 @@ $disable='';
             $disabled=true;
             }
             
-            $func=new Functions();
-            echo $func->GetCustomerList($form,$model,$disabled,"Customer");
+            echo $form->field($model,'customer_id')->widget(Select2::classname(),[
+                'data' => $customers,
+                'theme' => Select2::THEME_KRAJEE,
+                'options' => [
+                    'placeholder' => 'Select Customer',
+                ],
+                'pluginOptions' => [
+                    'allowClear' => true,
+                ],
+                'pluginEvents' => [
+                    "change" => "function() {
+                        var customerId = $(this).val();
+                        $.ajax({
+                            url: '".Url::toRoute("/finance/op/getlistrequest")."',
+                            //dataType: 'json',
+                            method: 'GET',
+                            data: {id:customerId},
+                            success: function (data, textStatus, jqXHR) {
+                                $('.image-loader').removeClass( \"img-loader\" );
+                                if (customerId > 0){
+                                    $('#op-subsidiary_customer_ids').prop('disabled', false);
+                                } else {
+                                     $('#op-subsidiary_customer_ids').prop('disabled', true);
+                                }
+                                $('#requests').html(data);
+                            },
+                            beforeSend: function (xhr) {
+                                $('.image-loader').addClass( \"img-loader\" );
+                            },
+                            error: function (jqXHR, textStatus, errorThrown) {
+                                console.log(textStatus+' '+errorThrown);
+                            }
+                        });
+                    }",
+                ],
+            ]);
             ?>    
            
             </div>
              <div class="col-sm-6">
                <?= $form->field($model, 'subsidiary_customer_ids')->widget(Select2::classname(), [
-               'data' => ArrayHelper::map(Customer::find()->where(['not',['customer_id'=>$model->customer_id]])->all(),'customer_id','customer_name'),
-               //'initValueText'=>$model->modeofrelease_ids,
-               'language' => 'en',
-                'disabled'=>true,
-                'options' => [
-                   'placeholder' => 'Select Subsidiary Customer(s)...',
-                   'multiple' => true,
-                   //'disabled'=>$disabled
-               ],
-               'pluginEvents' => [
-                   "change" => "function() { 
-                      // $('#modeofrelease_ids').val($(this).val());
-                   }
-                   ",
-               ]
-                ])->label('Subsidiary Customer(s) * (Optional)'); ?> 
+                'data' => ArrayHelper::map(Customer::find()->where(['not',['customer_id'=>$model->customer_id]])->all(),'customer_id','customer_name'),
+                'theme' => Select2::THEME_KRAJEE,    
+                'language' => 'en',
+                    'disabled'=>true,
+                    'options' => [
+                    'placeholder' => 'Select Subsidiary Customer(s)...',
+                    'multiple' => true,
+                ],
+                'pluginEvents' => [
+                    "change" => "function() {
+                            var customerId = $('#op-customer_id').val();
+                            var subsidiaryId = $(this).val();
+                            var ids='';
+                            if (subsidiaryId != ''){
+                                ids=subsidiaryId+','+customerId;
+                            } else {
+                                ids=customerId;
+                            }
+                            $.ajax({
+                                url: '".Url::toRoute("/finance/op/getlistrequest")."',
+                                //dataType: 'json',
+                                method: 'GET',
+                                data: {id:ids},
+                                success: function (data, textStatus, jqXHR) {
+                                    $('.image-loader').removeClass( \"img-loader\" );
+                                    if (customerId > 0){
+                                        $('#op-subsidiary_customer_ids').prop('disabled', false);
+                                    } else {
+                                        $('#op-subsidiary_customer_ids').prop('disabled', true);
+                                    }
+                                    $('#requests').html(data);
+                                },
+                                beforeSend: function (xhr) {
+                                    $('.image-loader').addClass( \"img-loader\" );
+                                },
+                                error: function (jqXHR, textStatus, errorThrown) {
+                                    console.log(textStatus+' '+errorThrown);
+                                }
+                            });
+                    }
+                    ",
+                ]
+                    ])->label('Subsidiary Customer(s) * (Optional)'); ?> 
             </div>
         </div>
         
         <div class="row">
             <div class="col-lg-12">  
-                 <div id="prog" style="position:relative;display:none;">
-                    <img style="display:block; margin:0 auto;" src="<?php echo  $GLOBALS['frontend_base_uri']; ?>/images/ajax-loader.gif">
-                     </div>
-                
-
+            <div class="row">
+            <div class="col-lg-12">  
                 <div id="requests" style="padding:0px!important;">    	
-                   <?php
-                   if (!$model->isNewRecord){
-                      // $model->RequestIds=1;
-                      // echo$form->field($model, 'requestid_update')->textInput()->label(false);
-                      // echo $this->renderAjax('_paymentitems', ['dataProvider'=>$dataProvider,'model'=>$request_model]);
-                   } 
-                   ?>
+                  
                 </div> 
-
+            </div>
+            </div> 
             </div>
         </div> 
 		 <?php echo $form->field($model, 'RequestIds')->hiddenInput()->label(false) ?>
         <div class="row">
             <div class="col-lg-12"> 
-                <?= $form->field($model, 'purpose')->textarea(['maxlength' => true,'disabled' => $disable]); ?>
+                <?= $form->field($model, 'purpose')->textarea(['maxlength' => true]); ?>
             </div>
         </div>
 
         <input type="text" id="wallet" name="wallet" hidden>
         
         <div class="form-group pull-right">
-            <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary',
-                'id'=>'createOP','disabled'=>$disable]) ?>
+            <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary','id'=>'createOP']) ?>
             <?php if(Yii::$app->request->isAjax){ ?>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
             <?php } ?>
@@ -158,116 +210,33 @@ $disable='';
     }
 </style>
 
-<script type="text/javascript">
-    $('#op-customer_id').on('change',function(e) {
-       
-       $(this).select2('close');
-       e.preventDefault();
-       $('#op-subsidiary_customer_ids').val('').trigger('change');
-        $('#prog').show();
-        $('#requests').hide();
-        var cid=$(this).val();
-        
-        if (cid == ""){
-            cid=-1;
-            $('#op-subsidiary_customer_ids').prop('disabled', true);
-            $('#op-subsidiary_customer_ids').select2('close');
-        }
-        else{
-             $('#op-subsidiary_customer_ids').prop('disabled', false);
-        }
-         jQuery.ajax( {
-            type: 'POST',
-            url: '/finance/op/check-customer-wallet?customerid='+cid,
-            dataType: 'html',
-            success: function ( response ) {
-               $('#wallet').val(response);
-            },
-            error: function ( xhr, ajaxOptions, thrownError ) {
-                alert( thrownError );
-            }
-        });
-        jQuery.ajax( {
-            type: 'POST',
-            //data: {
-            //    customer_id:customer_id,
-           // },
-            url: '/finance/op/getlistrequest?id='+cid,
-            dataType: 'html',
-            success: function ( response ) {
-
-               setTimeout(function(){
-               $('#prog').hide();
-               $('#requests').show();
-               $('#requests').html(response);
-                   }, 0);
-
-
-            },
-            error: function ( xhr, ajaxOptions, thrownError ) {
-                alert( thrownError );
-            }
-        });
-        
-       //alert(paymentmode);
-        $(this).select2('open');
-      //  $(this).one('select-focus',select2Focus);
-      $(this).attr('tabIndex',1);
-       checkpayment_mode();
-    });
-    
-    $('#op-payment_mode_id').on('change',function(e) {
-        e.preventDefault();
-        checkpayment_mode();
-    });
-    function checkpayment_mode(){
-        var payment_mode=$('#op-payment_mode_id').val();
-        if(payment_mode == 4){
-            $('#op-purpose').prop('disabled', true);
-            $('#createOP').prop('disabled', true);
-        }
-        else{
-            $('#op-purpose').prop('disabled', false);
-            $('#createOP').prop('disabled', false);
-        }    
-    }
-    
-     $('#op-subsidiary_customer_ids').on('change',function(e) {
-        $(this).select2('close');
-        e.preventDefault();
-        var customer_id= $('#op-customer_id').val();
-        var sdc=$(this).val();
-        var ids='';
-        if (customer_id == ""){
-            ids=-1;
-        }else{
-            if (sdc == ""){
-                ids=customer_id;
-            }
-            else{
-                ids=sdc+','+customer_id;
-            }
-        }
-       
-        //alert(ids);
-        jQuery.ajax( {
-            type: 'POST',
-            url: '/finance/op/getlistrequest?id='+ids,
-            dataType: 'html',
-            success: function ( response ) {
-               setTimeout(function(){
-               $('#requests').html(response);
-                   }, 0);
-
-
-            },
-            error: function ( xhr, ajaxOptions, thrownError ) {
-                alert( thrownError );
-            }
-        });     
-        
-        $(this).select2('open');
-      //  $(this).one('select-focus',select2Focus);
-      $(this).attr('tabIndex',1);
-    });
-</script>
+<style type="text/css">
+/* Absolute Center Spinner */
+.img-loader {
+    position: fixed;
+    z-index: 999;
+    /*height: 2em;
+    width: 2em;*/
+    height: 64px;
+    width: 64px;
+    overflow: show;
+    margin: auto;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-image: url('/images/img-png-loader64.png');
+    background-repeat: no-repeat;
+}
+/* Transparent Overlay */
+.img-loader:before {
+    content: '';
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.3);
+}
+</style>

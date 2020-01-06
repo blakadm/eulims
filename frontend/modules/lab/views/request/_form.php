@@ -1,5 +1,6 @@
 <?php
 
+
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use kartik\select2\Select2;
@@ -7,6 +8,7 @@ use yii\helpers\ArrayHelper;
 use common\models\lab\Lab;
 use kartik\datetime\DateTimePicker;
 use common\models\lab\Customer;
+
 use yii\web\JsExpression;
 use kartik\widgets\DatePicker;
 use common\models\lab\Paymenttype;
@@ -43,8 +45,8 @@ $js=<<<SCRIPT
         $("#erequest-discount_id").val(0).trigger('change');
         $("#erequest-discount_id").prop('disabled',false);
     }else{//Fully Subsidized
-        $("#erequest-discount_id").val(0).trigger('change');
-        $("#erequest-discount_id").prop('disabled',true);
+        $("#erequest-discount_id").val(8).trigger('change');
+       
     }
     $("#erequest-payment_type_id").val(this.value);  
 SCRIPT;
@@ -76,13 +78,14 @@ $model->modeofreleaseids=$model->modeofrelease_ids;
     <?= $form->field($model, 'total')->hiddenInput(['maxlength' => true])->label(false) ?>
     <input type="hidden" id="rstlid" name="rstlid" value="<?= $GLOBALS["rstl_id"] ?>">
 <div class="row">
+
     <div class="col-md-6">
     <?= $form->field($model, 'request_type_id')->widget(Select2::classname(), [
-        'data' => ArrayHelper::map(RequestType::find()->where('request_type_id !=:requestTypeId',[':requestTypeId'=>2])->all(),'request_type_id','request_type'),
+        'data' => ArrayHelper::map(RequestType::find()->where('request_type_id =:requestTypeId',[':requestTypeId'=>1])->all(),'request_type_id','request_type'),
         'language' => 'en',
-        'options' => ['placeholder' => 'Select Request Type','disabled'=>$disabled],
+        'options' => ['placeholder' => 'Select Request Type','readonly'=>'readonly'],
         'pluginOptions' => [
-            'allowClear' => true
+            'allowClear' => false
         ]
     ])->label('Request Type'); ?>
     </div>
@@ -115,31 +118,18 @@ $model->modeofreleaseids=$model->modeofrelease_ids;
 </div>
 <div class="row">
     <div class="col-md-6">
-     <?= $form->field($model, 'lab_id')->widget(DepDrop::classname(), [
-        //'data' => ArrayHelper::map(Lab::find()->all(),'lab_id','labname'),
-        'type'=>DepDrop::TYPE_SELECT2,
-        'language' => 'en',
-        'options' => ['placeholder' => 'Select Laboratory','disabled'=>$disabled],
-        'pluginOptions' => [
-            'allowClear' => true
-        ],
-        'pluginOptions'=>[
-           'depends'=>['rstlid','erequest-request_type_id'],
-           'placeholder'=>'Select Laboratory',
-           'url'=>Url::to(['/api/ajax/getlab']),
-           'LoadingText'=>'Loading...'
-        ],
-        'pluginEvents'=>[
-            "change" => "function() { 
-                if(this.value==3){//Metrology
-                   $('#div_met').show();
-                }else{
-                   $('#div_met').hide();
-                }
+   
 
-            }",
+<?= $form->field($model, 'lab_id')->widget(Select2::classname(), [
+        'data' => ArrayHelper::map(Lab::find()->where('active =:active',[':active'=>1])->all(),'lab_id','labname'),
+        'language' => 'en',
+        'options' => ['placeholder' => 'Select Lab','readonly'=>'readonly'],
+        'pluginOptions' => [
+            'allowClear' => false
         ]
-    ])->label('Laboratory'); ?>
+    ])->label('Lab'); ?>
+
+
     </div>
     <div class="col-md-6">
         <label class="control-label">Payment Type</label>
@@ -334,6 +324,9 @@ $model->modeofreleaseids=$model->modeofrelease_ids;
     ])->label('Purpose'); ?>
     </div>
     <div class="col-md-6">
+
+ 
+
     <?= $form->field($model, 'report_due')->widget(DatePicker::classname(), [
         'readonly'=>true,
         'disabled' => $disabled,
@@ -341,8 +334,11 @@ $model->modeofreleaseids=$model->modeofrelease_ids;
         'value'=>function($model){
              return date("m/d/Y",$model->report_due);
         },
+       //'setOnEmpty' => true, 
+        'value' => '',
 	'pluginOptions' => [
             'autoclose' => true,
+            // 'setOnEmpty' => true,
             'removeButton' => false,
             'format' => 'yyyy-mm-dd'
 	],
@@ -358,6 +354,14 @@ $model->modeofreleaseids=$model->modeofrelease_ids;
     </div>
     <div class="col-md-6">
     <?= $form->field($model, 'receivedBy')->textInput(['readonly' => true]) ?>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+    <?= $form->field($model, 'contact_num')->textInput(['readonly' => $disabled]) ?>
+    </div>
+    <div class="col-md-6">
+    
     </div>
 </div>
     <div class="row" style="float: right;padding-right: 15px">

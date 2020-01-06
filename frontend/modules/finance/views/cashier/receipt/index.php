@@ -26,7 +26,7 @@ $Header.="Receipt";
     
   <div class="table-responsive">
     <?php 
-    $Buttontemplate='{view}'; 
+    $Buttontemplate='{view}{update}'; 
     ?>
       
     <?= GridView::widget([
@@ -42,6 +42,7 @@ $Header.="Receipt";
         'panel' => [
                 'type' => GridView::TYPE_PRIMARY,
                 'before'=>Html::button('<i class="glyphicon glyphicon-plus"></i> Create Receipt', ['value' => Url::to(['/finance/cashier/addreceipt']),'title'=>'Create Receipt', 'onclick'=>'addReceipt(this.value,this.title)', 'class' => 'btn btn-success','id' => 'modalBtn']),
+				
                 'heading' => '<span class="glyphicon glyphicon-book"></span>  ' . Html::encode($this->title),
                 
         ],
@@ -136,7 +137,11 @@ $Header.="Receipt";
 //                    },
                     'view' => function ($url, $model) {
                         return Html::button('<span class="glyphicon glyphicon-eye-open"></span>', ['value' => '/finance/cashier/viewreceipt?receiptid='.$model->receipt_id,'onclick'=>'location.href=this.value', 'class' => 'btn btn-primary', 'title' => Yii::t('app', "View Receipt")]);
-                    },        
+                    },   
+				    'update' => function ($url, $model) {
+                        return Html::button('<span class="glyphicon glyphicon-pencil"></span>', ['value' => '/finance/cashier/update?id='.$model->receipt_id,'onclick' => 'LoadModal(this.title, this.value);', 'class' => 'btn btn-success
+                        ', 'title' => Yii::t('app', "Update Receipt")]);
+                    },   
                   ],
             ],
 

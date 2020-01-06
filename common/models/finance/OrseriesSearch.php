@@ -41,7 +41,7 @@ class OrseriesSearch extends Orseries
      */
     public function search($params)
     {
-        $query = Orseries::find();
+        $query = Orseries::find()->where(['rstl_id'=>Yii::$app->user->identity->profile->rstl_id]);
 
         // add conditions that should always apply here
 

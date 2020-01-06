@@ -5,7 +5,7 @@ use kartik\detail\DetailView;
 use kartik\grid\GridView;
 use common\models\finance\Collection;
 use yii\helpers\Url;
-
+use common\components\Functions;
 /* @var $this yii\web\View */
 /* @var $model common\models\finance\Op */
 
@@ -37,6 +37,17 @@ $footer="<div class='alert alert-info' style='background: #d9edf7 !important;mar
                  <p class='note' style='color:#265e8d'> <strong>For partial payment, please click on each amount and modify accordingly.</strong><br />
                  <strong>Note!</strong> Only amount with _ _ _ can be modified. </p>
              </div>";
+			 
+ if($model->receipt_id == null){
+        if($model->payment_mode_id!=5 || $model->payment_mode_id <> 6){//Not Flagged as Online payment
+           $receipt_button="<button type='button' value='/finance/cashier/create-receipt?op_id=$model->orderofpayment_id' id='btnCreateReceipt2' style='float: right;' class='btn btn-success' title='Receipt from OP' onclick='addReceipt(this.value,this.title)'><i class='fa fa-save'></i> Create Receipt</button>";    
+        }else{
+           $receipt_button=""; 
+        }
+    }
+    else{
+        $receipt_button="<button type='button' value='/finance/cashier/viewreceipt?receiptid=$model->receipt_id' id='Receipt2' style='float: right;margin-right: 5px' class='btn btn-success' onclick='location.href=this.value'><i class='fa fa-eye'></i> View Receipt</button>";                    
+   }		 
 ?>
 <div class="orderofpayment-view">
 
@@ -52,6 +63,11 @@ $footer="<div class='alert alert-info' style='background: #d9edf7 !important;mar
         ],
         'buttons1' => '',
         'attributes' => [
+			[
+                    'group'=>true,
+                    'label'=>'Order of Payment Details '.$receipt_button,
+                    'rowOptions'=>['class'=>'info']
+            ],
             [
                 'columns' => [
                     [
@@ -207,6 +223,10 @@ $footer="<div class='alert alert-info' style='background: #d9edf7 !important;mar
         $('#modal').modal('show')
             .find('#modalContent')
             .load(url);
+    }
+	
+    function addReceipt(url,title){
+       LoadModal(title,url,'true','600px');
     }
    
 </script>

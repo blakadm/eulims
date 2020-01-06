@@ -12,8 +12,10 @@ namespace frontend\controllers;
 use Yii;
 use yii\web\Controller;
 use common\models\lab\Discount;
+use common\models\lab\Businessnature;
 use common\models\finance\Client;
 use common\models\lab\Customer;
+use common\models\lab\Request;
 use common\models\finance\PostedOp;
 use frontend\modules\finance\components\epayment\ePayment;
 use common\models\finance\Op;
@@ -92,6 +94,20 @@ class AjaxController extends Controller{
         $discount= Discount::find()->where(['discount_id'=>$id])->one();
         \Yii::$app->response->format= \yii\web\Response::FORMAT_JSON;
         return $discount;
+    }
+    public function actionGetcustomer(){
+        $post= \Yii::$app->request->post();
+        $id=$post['discountid'];
+
+        $request = Request::find()->where(['request_ref_num'=>$id])->one();
+        $customer= Customer::find()->where(['customer_id'=>2])->one();
+        $nob = Businessnature::find()->where(['business_nature_id'=>$customer->business_nature_id])->one();
+
+        $customer_name = $customer->customer_name;
+
+        \Yii::$app->response->format= \yii\web\Response::FORMAT_JSON;
+
+        return ["customer_name"=> $customer_name, "nob"=>$nob->nature];
     }
     public function actionGetdiscountreferral(){
         $id=(int) \Yii::$app->request->get('discountid');

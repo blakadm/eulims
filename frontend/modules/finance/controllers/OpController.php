@@ -27,6 +27,7 @@ use yii2tech\spreadsheet\Myspreadsheet;
 use frontend\modules\reports\modules\finance\templates\Opspreadsheet;
 use yii\data\SqlDataProvider;
 use common\models\finance\PostedOp;
+use common\models\lab\Customer;
 /**
  * OrderofpaymentController implements the CRUD actions for Op model.
  */
@@ -144,18 +145,23 @@ class OpController extends Controller
         } 
         $model->order_date=date('Y-m-d');
         $model->payment_mode_id=1;
-        
+        $collectiontype=ArrayHelper::map(Collectiontype::find()->all(), 'collectiontype_id', 'natureofcollection');
+        $customer=ArrayHelper::map(Customer::find()->all(),'customer_id','customer_name');
         if(Yii::$app->request->isAjax){
             return $this->renderAjax('create', [
                 'model' => $model,
                 'searchModel' => $searchModel,
                 'dataProvider' => $dataProvider,
+                'collection_type' => $collectiontype,
+                'customers' => $customer
             ]);
         }else{
             return $this->render('create', [
                 'model' => $model,
                 'searchModel' => $searchModel,
                 'dataProvider' => $dataProvider,
+                'collection_type' => $collectiontype,
+                'customers' => $customer
             ]);
         }
         
@@ -171,7 +177,7 @@ class OpController extends Controller
     {
         $model = $this->findModel($id);
         $paymentitem_model= new Paymentitem();
-        
+       
         $query = Paymentitem::find()->where(['orderofpayment_id' => $model->orderofpayment_id]);
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -216,10 +222,14 @@ class OpController extends Controller
             return $this->redirect(['/finance/op']);  
          
         } else {
+            $collectiontype=ArrayHelper::map(Collectiontype::find()->all(), 'collectiontype_id', 'natureofcollection');
+            $customer=ArrayHelper::map(Customer::find()->all(),'customer_id','customer_name');
             return $this->renderAjax('update', [
                 'model' => $model,
                 'dataProvider'=>$dataProvider,
-                'paymentitem_model'=>$paymentitem_model
+                'paymentitem_model'=>$paymentitem_model,
+                'collection_type' => $collectiontype,
+                'customers' => $customer
             ]);
         }
         
@@ -513,14 +523,14 @@ class OpController extends Controller
       //find the record the testreport
       $op =$this->findModel($id);
       $var=$op->getBankAccount();
-      if($var['bank_name'] == ""){
+     /* if($var['bank_name'] == ""){
          Yii::$app->session->setFlash('warning', 'Please configure Bank Details!');
           return $this->redirect(['/finance/op/view?id='.$id]); 
-      }else{
+      }else{ */
           $exporter = new Opspreadsheet([
             'model'=>$op,
            ]);
-      }
+     // }
       //echo $id;
       //exit;
       

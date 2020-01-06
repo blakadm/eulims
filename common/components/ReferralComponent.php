@@ -30,7 +30,8 @@ use common\models\lab\Sample;
  */
 class ReferralComponent extends Component {
 
-    public $source = 'https://eulimsapi.onelab.ph';
+    //public $source = 'https://eulimsapi.onelab.ph';
+    public $source = 'http://localhost/eulimsapi.onelab.ph';
     /**
      * FindOne testname
      * @param integer $testnameId
@@ -592,7 +593,7 @@ class ReferralComponent extends Component {
         }
     }
     function downloadAttachment($referralId,$rstlId,$fileId){
-         if($referralId > 0 && $rstlId > 0 && $fileId > 0) {
+        if($referralId > 0 && $rstlId > 0 && $fileId > 0) {
             $apiUrl=$this->source.'/api/web/referral/attachments/download?referral_id='.$referralId.'&rstl_id='.$rstlId.'&file='.$fileId;
             //$curl = new curl\Curl();
             //$file = $curl->get($apiUrl);
@@ -608,7 +609,7 @@ class ReferralComponent extends Component {
         }
     }
     function getReferredAgency($referralId,$rstlId){
-         if($referralId > 0 && $rstlId > 0) {
+        if($referralId > 0 && $rstlId > 0) {
             $apiUrl=$this->source.'/api/web/referral/referrals/referred_agency?referral_id='.$referralId.'&rstl_id='.$rstlId;
             $curl = new curl\Curl();
             $curl->setOption(CURLOPT_CONNECTTIMEOUT, 180);
@@ -620,8 +621,32 @@ class ReferralComponent extends Component {
         }
     }
     function getReferralAll($rstlId){
-         if($rstlId > 0) {
+        if($rstlId > 0) {
             $apiUrl=$this->source.'/api/web/referral/referrals/referral_all?rstl_id='.$rstlId;
+            $curl = new curl\Curl();
+            $curl->setOption(CURLOPT_CONNECTTIMEOUT, 180);
+            $curl->setOption(CURLOPT_TIMEOUT, 180);
+            $list = $curl->get($apiUrl);
+            return $list;
+        } else {
+            return 'false';
+        }
+    }
+    function getIncomingReferral($rstlId) {
+        if($rstlId > 0) {
+            $apiUrl=$this->source.'/api/web/referral/referrals/incoming_referral?rstl_id='.$rstlId;
+            $curl = new curl\Curl();
+            $curl->setOption(CURLOPT_CONNECTTIMEOUT, 180);
+            $curl->setOption(CURLOPT_TIMEOUT, 180);
+            $list = $curl->get($apiUrl);
+            return $list;
+        } else {
+            return 'false';
+        }
+    }
+    function getSentReferral($rstlId) {
+        if($rstlId > 0) {
+            $apiUrl=$this->source.'/api/web/referral/referrals/sent_referral?rstl_id='.$rstlId;
             $curl = new curl\Curl();
             $curl->setOption(CURLOPT_CONNECTTIMEOUT, 180);
             $curl->setOption(CURLOPT_TIMEOUT, 180);

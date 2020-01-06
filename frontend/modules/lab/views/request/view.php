@@ -8,6 +8,7 @@ use common\components\Functions;
 use common\models\lab\Cancelledrequest;
 use common\models\lab\Discount;
 use common\models\lab\Request;
+use common\models\lab\Tagging;
 use common\models\lab\Sample;
 use common\models\lab\Tagginganalysis;
 use common\models\lab\Sampletype;
@@ -130,6 +131,7 @@ if($Request_Ref){//With Reference
     $EnablePrint="<span class='btn btn-primary' disabled style='margin-left: 5px'><i class='fa fa-print'></i> Print Request</span>";
     $btnID="id='btnSaveRequest'";
 }
+
 $Params=[
     'mRequestID'=>$model->request_id
 ];
@@ -225,7 +227,7 @@ $this->registerJs($PrintEvent);
                         [
                             'label'=>'Address',
                             'format'=>'raw',
-                            'value'=>$model->customer ? $model->customer->address : "",
+                            'value'=>$model->customer ? $model->customer->completeaddress : "",
                             'valueColOptions'=>['style'=>'width:30%'], 
                             'displayOnly'=>true
                         ],
@@ -317,18 +319,37 @@ $this->registerJs($PrintEvent);
                 [
                     'columns' => [
                         [
-                            'attribute'=>'receivedBy', 
+                            'attribute'=>'conforme', 
                             'format'=>'raw',
                             'displayOnly'=>true,
                             'valueColOptions'=>['style'=>'width:30%']
                         ],
                         [
-                            'attribute'=>'conforme',
+                            'attribute'=>'receivedBy',
                             'format'=>'raw',
                             'valueColOptions'=>['style'=>'width:30%'], 
                             'displayOnly'=>true
                         ],
                     ],
+                    
+                ],
+                [
+                    'columns' => [
+                      
+                        [
+                            'attribute'=>'contact_num',
+                            'format'=>'raw',
+                            'valueColOptions'=>['style'=>'width:30%'], 
+                            'displayOnly'=>true
+                        ],
+                        [
+                            'attribute'=>'created_at', 
+                            'format'=>'raw',
+                            'displayOnly'=>true,
+                            'valueColOptions'=>['style'=>'width:30%']
+                        ],
+                    ],
+                    
                 ],
             ],
 
@@ -356,6 +377,18 @@ $this->registerJs($PrintEvent);
                     'enableSorting' => false,
 					'value' => function($data){
                         return ($data->request->lab_id == 2) ? "Sampling Date: <span style='color:#000077;'><b>".date("Y-m-d h:i A",strtotime($data->sampling_date))."</b></span>,&nbsp;".$data->description : $data->description;
+                    },
+                   'contentOptions' => [
+                        'style'=>'max-width:180px; overflow: auto; white-space: normal; word-wrap: break-word;'
+                    ],
+                ],
+				[
+                    'attribute'=>'customer_description',
+					'header'=>'Description provided by Customer',
+                    'format' => 'raw',
+                    'enableSorting' => false,
+					'value' => function($data){
+                        return empty($data->customer_description) ? "<span style='color:#444444;font-size:11px;'><i>No information provided</i></span>" : $data->customer_description;
                     },
                    'contentOptions' => [
                         'style'=>'max-width:180px; overflow: auto; white-space: normal; word-wrap: break-word;'
@@ -441,6 +474,12 @@ $this->registerJs($PrintEvent);
             $enableRequest = true;
         }else{
             $enableRequest = false;
+        }
+
+        if($model->discount > 0 || !empty($Request_Ref) || $samplecount == 0){
+            $enablePackage = true;
+        } else {
+            $enablePackage = false;
         }
 
         $analysisgridColumns = [
@@ -538,25 +577,45 @@ $this->registerJs($PrintEvent);
                 'hAlign'=>'center',
                 'format'=>'raw',
                 'value' => function($model) {
-                  $tagging = Tagginganalysis::findOne(['cancelled_by' => $model->analysis_id]);             
-                  if ($tagging){
+                //   $tagging = Tagginganalysis::findOne(['cancelled_by' => $model->analysis_id]);             
+                //   if ($tagging){
 
-                   if ($tagging->tagging_status_id==1) {
-                        return Html::button('<span style="width:90px;height:20px"><b>ONGOING</span>', ['value'=>Url::to(['/lab/tagging/status','id'=>$model->analysis_id]),'onclick'=>'LoadModal(this.title, this.value, true, 600);', 'class' => 'btn btn-primary','title' => Yii::t('app', "Analysis Status")]);
-                      }else if ($tagging->tagging_status_id==2) {
-                        return Html::button('<span style="width:90px;height:20px"><b>COMPLETED</span>', ['value'=>Url::to(['/lab/tagging/status','id'=>$model->analysis_id]),'onclick'=>'LoadModal(this.title, this.value, true, 600);', 'class' => 'btn btn-success','title' => Yii::t('app', "Analysis Status")]);
-                      }
-                      else if ($tagging->tagging_status_id==3) {
-                          return "<span class='badge btn-warning' style='width:90px;height:20px'><b>ASSIGNED</span>";
-                      }
-                      else if ($tagging->tagging_status_id==4) {
-                          return "<span class='badge btn-danger' style='width:90px;height:20px'><b>CANCELLED</span>";
-                      }
+                //    if ($tagging->tagging_status_id==1) {
+                //         return Html::button('<span style="width:90px;height:20px"><b>ONGOING</span>', ['value'=>Url::to(['/lab/tagging/status','id'=>$model->analysis_id]),'onclick'=>'LoadModal(this.title, this.value, true, 600);', 'class' => 'btn btn-primary','title' => Yii::t('app', "Analysis Status")]);
+                //       }else if ($tagging->tagging_status_id==2) {
+                //         return Html::button('<span style="width:90px;height:20px"><b>COMPLETED</span>', ['value'=>Url::to(['/lab/tagging/status','id'=>$model->analysis_id]),'onclick'=>'LoadModal(this.title, this.value, true, 600);', 'class' => 'btn btn-success','title' => Yii::t('app', "Analysis Status")]);
+                //       }
+                //       else if ($tagging->tagging_status_id==3) {
+                //           return "<span class='badge btn-warning' style='width:90px;height:20px'><b>ASSIGNED</span>";
+                //       }
+                //       else if ($tagging->tagging_status_id==4) {
+                //           return "<span class='badge btn-danger' style='width:90px;height:20px'><b>CANCELLED</span>";
+                //       }
                        
                 
-                  }else{
-                   return Html::button('<span"><b>PENDING</span>', ['value'=>Url::to(['/lab/tagging/status','id'=>$model->analysis_id]),'onclick'=>'LoadModal(this.title, this.value, true, 600);', 'class' => 'btn btn-default','title' => Yii::t('app', "Analysis Status")]);
-                }
+                //   }else{
+                //    return Html::button('<span"><b>PENDING</span>', ['value'=>Url::to(['/lab/tagging/status','id'=>$model->analysis_id]),'onclick'=>'LoadModal(this.title, this.value, true, 600);', 'class' => 'btn btn-default','title' => Yii::t('app', "Analysis Status")]);
+                // }
+
+                $tagging = Tagging::findOne(['analysis_id' => $model->analysis_id]); 
+                if ($tagging){
+
+                    if ($tagging->tagging_status_id==1) {
+                           return "<span class='badge btn-primary' style='width:90px;height:20px'>ONGOING</span>";
+                       }else if ($tagging->tagging_status_id==2) {
+                           return "<span class='badge btn-success' style='width:90px;height:20px'>COMPLETED</span>";
+                       }
+                       else if ($tagging->tagging_status_id==3) {
+                           return "<span class='badge btn-warning' style='width:90px;height:20px'>ASSIGNED</span>";
+                       }
+                       else if ($tagging->tagging_status_id==4) {
+                           return "<span class='badge btn-danger' style='width:90px;height:20px'>CANCELLED</span>";
+                       }
+                        
+                 
+                   }else{
+                       return "<span class='badge btn-default' style='width:80px;height:20px'>PENDING</span>";
+                   }
                  
                 },
                 'enableSorting' => false,
@@ -597,7 +656,7 @@ $this->registerJs($PrintEvent);
                     'heading'=>'<h3 class="panel-title">Analysis</h3>',
                     'type'=>'primary',
                     'before'=>Html::button('<i class="glyphicon glyphicon-plus"></i> Add Analysis', ['disabled'=>$enableRequest,'value' => Url::to(['analysis/create','id'=>$model->request_id]),'title'=>'Add Analyses', 'onclick'=> $ClickButton, 'class' => 'btn btn-success','id' => 'btn_add_analysis'])."   ".
-                    Html::button('<i class="glyphicon glyphicon-plus"></i> Add Package', ['disabled'=>$enableRequest,'value' => Url::to(['/services/packagelist/createpackage','id'=>$model->request_id]),'title'=>'Add Package', 'onclick'=>$ClickButton, 'class' => 'btn btn-success','id' => 'btn_add_package'])." ".
+                    Html::button('<i class="glyphicon glyphicon-plus"></i> Add Package', ['disabled'=>$enablePackage,'value' => $model->discount > 0 ? '' : Url::to(['/services/packagelist/createpackage','id'=>$model->request_id]),'title'=>'Add Package', 'onclick'=>$model->discount > 0 ? 'BootstrapDialog.alert({type:BootstrapDialog.TYPE_DANGER,title:"Warning",message:"Add package not allowed for request with discount!"})' : $ClickButton, 'class' => 'btn btn-success','id' => 'btn_add_package'])." ".
                     Html::button('<i class="glyphicon glyphicon-plus"></i> Additional Fees', ['disabled'=>$enableRequest,'value' => Url::to(['/lab/fee/create','id'=>$model->request_id]),'title'=>'Add Additional Fees', 'onclick'=>$ClickButton, 'class' => 'btn btn-success','id' => 'btn_add_fees']),
                    'after'=>false,
                    'footer'=>"<div class='row' style='margin-left: 2px;padding-top: 5px'><button ".$disableButton." value='/lab/request/saverequestransaction' ".$btnID." class='btn btn-success'><i class='fa fa-save'></i> Save Request</button>".$EnablePrint."</div>",

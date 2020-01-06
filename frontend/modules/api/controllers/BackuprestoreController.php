@@ -1,6 +1,5 @@
 <?php
-
-namespace frontend\modules\lab\controllers;
+namespace frontend\modules\api\controllers;
 
 use Yii;
 use common\models\lab\Backuprestore;

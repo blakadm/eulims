@@ -62,7 +62,7 @@ $func=new Functions();
                 'filterWidgetOptions' => [
                     'pluginOptions' => ['allowClear' => true],
                 ],
-                'filterInputOptions' => ['placeholder' => 'Sample Type', 'id' => 'grid-op-search-sampletype_id'],
+                'filterInputOptions' => ['placeholder' => 'Sample Type', 'id' => 'grid-search-sampletype_id'],
 				'headerOptions' => ['class' => 'text-center'],
             ],
             [
@@ -91,7 +91,7 @@ $func=new Functions();
                 'filterWidgetOptions' => [
                     'pluginOptions' => ['allowClear' => true],
                 ],
-                'filterInputOptions' => ['placeholder' => 'Select Status', 'id' => 'grid-op-search-active'],
+                'filterInputOptions' => ['placeholder' => 'Select Status', 'id' => 'grid-search-active'],
 				'contentOptions' => ['class' => 'text-center'],
 				'headerOptions' => ['class' => 'text-center'],
             ],

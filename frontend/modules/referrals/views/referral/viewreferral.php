@@ -81,6 +81,15 @@ switch(\Yii::$app->session['config-item']){
         break;
 }
 $Session= Yii::$app->session;
+
+if(empty($request['referral_code'])){
+    $labelpanel = '<i class="glyphicon glyphicon-book"></i> Referral Code ' . $request['referral_code'];
+} else {
+    //$btnPrint = "<a href='/referrals/referral/print-referral?id=".$model->referral_id."' class='btn-sm btn-default' style='color:#000000;margin-left:15px;'><i class='fa fa-print'></i> Print</a>";
+    //$btnPrint = "<a href='/referrals/referral/printref?id=".$request['referral_id']."' class='btn btn-success' style='margin-left: 5px'  target='_blank'><i class='fa fa-print'></i> Print Referral</a>";
+    $btnPrint = "<a href='/reports/preview?url=/lab/request/print-request?id=".$request['local_request_id']."' class='btn btn-success' style='margin-left: 5px'  target='_blank'><i class='fa fa-print'></i> Print Referral</a>";
+    $labelpanel = '<i class="glyphicon glyphicon-book"></i> Referral Code ' . $request['referral_code'] .' '.$btnPrint;
+}
 ?>
 <div class="section-request">
 <div class="request-view ">
@@ -93,7 +102,7 @@ $Session= Yii::$app->session;
             'hover'=>true,
             'mode'=>DetailView::MODE_VIEW,
             'panel'=>[
-                'heading'=>'<i class="glyphicon glyphicon-book"></i> Referral Code ' . $request['referral_code'],
+				'heading'=>$labelpanel,
                 'type'=>DetailView::TYPE_PRIMARY,
             ],
             'buttons1' => '',
@@ -207,7 +216,7 @@ $Session= Yii::$app->session;
                                 $link = '';
                                 if($depositslip > 0){
                                     foreach ($depositslip as $deposit) {
-                                        $link .= Html::a('<span class="glyphicon glyphicon-save-file"></span> '.$deposit['filename'],'/referrals/attachment/download?request_id='.$request['local_request_id'].'&file='.$deposit['attachment_id'], ['style'=>'font-size:12px;color:#000077;font-weight:bold;','title'=>'Download Deposit Slip','target'=>'_self'])."<br>";
+                                        $link .= Html::a('<span class="glyphicon glyphicon-save-file"></span> '.$deposit['filename'],'/referrals/attachment/download?request_id='.$request['local_request_id'].'&file='.$deposit['attachment_id'].'&referral_id='.$deposit['referral_id'], ['style'=>'font-size:12px;color:#000077;font-weight:bold;','title'=>'Download Deposit Slip','target'=>'_self'])."<br>";
                                     }
                                 }
                                 return $link;
@@ -224,7 +233,7 @@ $Session= Yii::$app->session;
                                 $link = '';
                                 if($officialreceipt > 0){
                                     foreach ($officialreceipt as $or) {
-                                        $link .= Html::a('<span class="glyphicon glyphicon-save-file"></span> '.$or['filename'],'/referrals/attachment/download?request_id='.$request['local_request_id'].'&file='.$or['attachment_id'], ['style'=>'font-size:12px;color:#000077;font-weight:bold;','title'=>'Download Official Receipt','target'=>'_self'])."<br>";
+                                        $link .= Html::a('<span class="glyphicon glyphicon-save-file"></span> '.$or['filename'],'/referrals/attachment/download?request_id='.$request['local_request_id'].'&file='.$or['attachment_id'].'&referral_id='.$deposit['referral_id'], ['style'=>'font-size:12px;color:#000077;font-weight:bold;','title'=>'Download Official Receipt','target'=>'_self'])."<br>";
                                     }
                                 }
                                 return $link;
@@ -284,6 +293,18 @@ $Session= Yii::$app->session;
                     'enableSorting' => false,
                     'value' => function($data) use ($request){
                         return ($request['lab_id'] == 2) ? "Sampling Date: <span style='color:#000077;'><b>".date("Y-m-d h:i A",strtotime($data['sampling_date']))."</b></span>,&nbsp;".$data['description'] : $data['description'];
+                    },
+                   'contentOptions' => [
+                        'style'=>'max-width:180px; overflow: auto; white-space: normal; word-wrap: break-word;'
+                    ],
+                ],
+                [
+                    'attribute'=>'customer_description',
+                    'header'=>'Description provided by Customer',
+                    'format' => 'raw',
+                    'enableSorting' => false,
+                    'value' => function($data){
+                        return empty($data['customer_description']) ? "<span style='color:#444444;font-size:11px;'><i>No information provided</i></span>" : $data['customer_description'];
                     },
                    'contentOptions' => [
                         'style'=>'max-width:180px; overflow: auto; white-space: normal; word-wrap: break-word;'
@@ -418,7 +439,7 @@ $Session= Yii::$app->session;
             ]);
         ?>
     </div>
-    
+    <?php if($request['referral_code']){ ?>
     <div class="container" <?php echo $haveStatus; ?>>
         <ul class="progress-track">
                 <li class="<?php echo $statusreceived; ?> progress-tooltip">
@@ -459,7 +480,15 @@ $Session= Yii::$app->session;
                 </li>
         </ul>
     </div>
-    
+    <div class="container">
+     <?php
+       // echo "<a href='/referrals/referral/printref?id=".$request['referral_id']."' class='btn btn-success' style='margin-left: 5px'  target='_blank'><i class='fa fa-print'></i> Print Referral</a>";
+       // echo "<br /><br />";
+       /* echo "<pre>";
+        print_r($request);
+        echo "</pre>";*/
+     ?>
+     </div>
       <div class="container">
          <div class="panel panel-primary">
         
@@ -499,7 +528,7 @@ $Session= Yii::$app->session;
         </div>
         </div>      
     </div>
-    
+    <?php } ?>
 </div>
 </div>
 <style type="text/css">

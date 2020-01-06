@@ -54,7 +54,9 @@ class SampleController extends Controller
     public function actionIndex()
     {
         $searchModel = new SampleSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $showData = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = !empty($showData) ? $showData : $searchModel;
+        //$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 		$dataProvider->sort = false;
         $dataProvider->pagination->pageSize=10;
 
@@ -159,8 +161,9 @@ class SampleController extends Controller
                     //$sample->testcategory_id = (int) $_POST['Sample']['testcategory_id'];
                     //$sample->testcategory_id = 0;
                     $sample->sampletype_id = (int) $_POST['Sample']['sampletype_id'];
-                    $sample->samplename = $_POST['Sample']['samplename'];
+                    $sample->samplename = $_POST['Sample']['samplename'].' #'.$i;
                     $sample->description = $_POST['Sample']['description'];
+                    $sample->customer_description = $_POST['Sample']['customer_description'];
                     $sample->request_id = $request->request_id;
                     //$sample->sample_month = date('m', strtotime($request->request_datetime));
                     //$sample->sample_year = date('Y', strtotime($request->request_datetime));
@@ -173,17 +176,17 @@ class SampleController extends Controller
 					}
                     $sample->save(false);
                 }
-				Yii::$app->session->setFlash('success', "Sample Successfully Created.");
+				//Yii::$app->session->setFlash('success', "Sample Successfully Created.");
                 return $this->redirect(['/lab/request/view', 'id' => $requestId]);
             } else {
                 if($model->save(false)){
-					Yii::$app->session->setFlash('success', "Sample Successfully Created.");
+				//	Yii::$app->session->setFlash('success', "Sample Successfully Created.");
                     return $this->redirect(['/lab/request/view', 'id' => $requestId]);
                 }
             }
 
         } elseif (Yii::$app->request->isAjax) {
-			$model->sampling_date = date('m/d/Y h:i:s A');
+		//	$model->sampling_date = date('m/d/Y h:i:s A');
 			return $this->renderAjax('_form', [
 				'model' => $model,
 				//'testcategory' => $testcategory,
@@ -255,11 +258,11 @@ class SampleController extends Controller
             } else {
                 if($model->save(false) && isset($analysisSave) == 1){
                     $transaction->commit();
-    				Yii::$app->session->setFlash('success', $model->samplename." Successfully Updated.");
+    			//	Yii::$app->session->setFlash('success', $model->samplename." Successfully Updated.");
                     return $this->redirect(['/lab/request/view', 'id' => $model->request_id]);
                 } else {
                     $transaction->rollBack();
-                    Yii::$app->session->setFlash('error', 'Error occured during update!');
+                //    Yii::$app->session->setFlash('error', 'Error occured during update!');
                     return $this->redirect(['view', 'id' => $model->request_id]);
                 }
             }

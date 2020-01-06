@@ -1,0 +1,78 @@
+body {
+    width: 8.27in;
+    max-height: 11.69in;
+    margin: 0.25in auto;
+    font-family: Arial, sans-serif;
+    font-size: 11pt;
+    -webkit-print-color-adjust: exact !important;
+  }
+
+  p { margin: 5px 0; }
+  strong, th { font-weight: bold; }
+
+  table, th, td {
+    border: 1px solid #000;
+    border-collapse: collapse;
+    font-size: 7pt;
+    /* text-align: center; */
+    /* width: 100%; */
+    padding: 0.5em;
+    /* text-align: initial; */
+  }
+
+  .header {
+    text-align: center;
+  }
+
+  .font-small { font-size: 10px; }
+  .highlight { background-color: #ffde37; }
+
+  .score-card-container {
+    border: 1px solid #000;
+    padding: 5px;
+  }
+  .score-card,
+  .score-card > div > div,
+  .score-card-label {
+    display: block;
+  }
+  .score-card h5 {
+    text-align: center;
+    font-weight: bold;
+  }
+  .score-card > .detractors {
+    display: inline-block;
+    width: 63.63%;
+    color: #f85e5e;
+  }
+  .score-card > .passives {
+    display: inline-block;
+    width: 18.18%;
+    color: #716f6f;
+  }
+  .score-card > .promoters {
+    display: inline-block;
+    width: 18.18%;
+    color: #22bf22;
+  }
+  .score-card > div > div > div {
+    flex: 1;
+    border: 1px solid rgb(214, 213, 213);
+    text-align: center;
+  }
+  .score-card-label > div {
+    flex: 1;
+    text-align: center;
+    margin-top: 9px;
+    font-size: 8px;
+  }
+  .score-card-label > div:first-child {
+    text-align: left;
+  }
+  .score-card-label > div:last-child {
+    text-align: right;
+  }
+
+  .bg-grey { background-color: #f5f5f5; }
+  .color { color: #f85e5e; }
+  .color2 { color: blue; }

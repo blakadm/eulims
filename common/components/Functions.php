@@ -291,6 +291,9 @@ class Functions extends Component{
     function GetSampleCode($form,$model,$disabled=false,$Label=false){
         //isali sa query na year 2018(this year) ang ioutput na sample codes para hindi malito 
         //pag multi year na gamitin
+
+       
+
 $dataExp = <<< SCRIPT
          function (params, page) {
                 return {
@@ -305,6 +308,9 @@ SCRIPT;
                 };
             }
 SCRIPT;
+
+
+
                 $url = \yii\helpers\Url::to(['/lab/tagging/getsamplecode']);
               //  $url = '';
                 // Get the initial city description
@@ -315,7 +321,7 @@ SCRIPT;
                     'options' => ['placeholder' => 'Search or Scan Sample Code ...','disabled'=>$disabled,'class'=>'.input-group.input-group-sm'],
                     'pluginOptions' => [
                         'allowClear' => true,
-                        'minimumInputLength' => 3,
+                        'minimumInputLength' => 2,
                         'language' => [
                             'errorLoading' => new JsExpression("function () { return 'Waiting for results...'; }"),
                         ],

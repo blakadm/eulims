@@ -81,6 +81,23 @@ class AccomplishmentController extends \yii\web\Controller
 		}
 
         //return $this->render('index');
+	}
+	
+	public function actionMontly($id)
+    {
+        // $taggingmodel = Tagging::find()->where(['analysis_id'=>$id])->one();
+        // $analysis = Analysis::find()->where(['analysis_id'=>$id])->one();      
+        // $model = new Tagging();
+        
+        // if ($taggingmodel){
+            return $this->renderAjax('monthly');
+        // }else{
+        //     return $this->renderAjax('monthly', [
+        //         'taggingmodel' => $taggingmodel,
+        //     ]);
+        // }
+
+      
     }
 
     protected function listLaboratory()

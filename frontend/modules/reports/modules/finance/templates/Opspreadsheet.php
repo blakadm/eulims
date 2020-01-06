@@ -59,9 +59,9 @@ class Opspreadsheet extends Spreadsheet
         $this->getDocument()->getActiveSheet()->setCellValue('J11', $cashier ? $cashier['name'] : "");
         $this->getDocument()->getActiveSheet()->setCellValue('J12', $cashier ? $cashier['designation'] : "");
         
-        $bank_account=$this->model->getBankAccount();
+        /*$bank_account=$this->model->getBankAccount();
         $this->getDocument()->getActiveSheet()->setCellValue('B32', $bank_account ? $bank_account['account_number'] : "");
-        $this->getDocument()->getActiveSheet()->setCellValue('H32', $bank_account ? $bank_account['bank_name'] : "");
+        $this->getDocument()->getActiveSheet()->setCellValue('H32', $bank_account ? $bank_account['bank_name'] : ""); */
         
         $accountant=$this->model->getPersonnel("ACCOUNTANT");
         $this->getDocument()->getActiveSheet()->setCellValue('M42', $accountant ? $accountant['name'] : "");
@@ -91,10 +91,10 @@ class Opspreadsheet extends Spreadsheet
 //         $this->getDocument()->getActiveSheet()->removeRow($row);
 
          #set password
-         $this->getDocument()->getActiveSheet()->getProtection()->setSheet(true);
+         /*$this->getDocument()->getActiveSheet()->getProtection()->setSheet(true);
          $this->getDocument()->getSecurity()->setLockWindows(true);
          $this->getDocument()->getSecurity()->setLockStructure(true);
-         $this->getDocument()->getSecurity()->setWorkbookPassword("PhpSpreadsheet");
+         $this->getDocument()->getSecurity()->setWorkbookPassword("PhpSpreadsheet"); */
 
         // Parent::setDocument($document);
     }

@@ -13,6 +13,7 @@ use common\models\inventory\InventoryWithdrawaldetails;
 	            ['class' => 'yii\grid\SerialColumn'],
 	            'expiration_date',
 	            'suppliers.suppliers',
+	            'po_number',
 	            'description',
 	            [
 	            	'header'=>'Content',
@@ -60,7 +61,7 @@ use common\models\inventory\InventoryWithdrawaldetails;
 <script type="text/javascript">
 	function setcontent(id,content,txtinput){
 		qty = txtinput.value;
-		amount=parseInt(content) * parseInt(qty);
+		amount=parseFloat(content) * parseInt(qty);
 		$('#tc-'+id).html(amount);
 	}
 </script>

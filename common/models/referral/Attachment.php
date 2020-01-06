@@ -33,7 +33,7 @@ class Attachment extends Model
             [['upload_date'], 'safe'],
             [['filename'], 'string', 'max' => 400],
 			//[['filename'], 'file', 'extensions' => 'png,jpg,pdf','maxFiles'=>5,'skipOnEmpty'=>false],
-			[['filename'], 'file', 'extensions' => 'png,jpg,pdf','maxSize' => 2048000,'tooBig' => 'Limit is 2,048KB or 2MB','skipOnEmpty'=>false], //2000 * 1024 bytes 
+			[['filename'], 'file', 'extensions' => 'png,jpg,jpeg,pdf','maxSize' => 2048000,'tooBig' => 'Limit is 2,048KB or 2MB','skipOnEmpty'=>false,'wrongExtension'=>'Only {extensions} files  are allowed!'], //2000 * 1024 bytes, Only files with these extensions are allowed: png, jpg, pdf, jpeg.
             [['uploadedby_name'], 'string', 'max' => 100],
             [['referral_id'], 'exist', 'skipOnError' => true, 'targetClass' => Referral::className(), 'targetAttribute' => ['referral_id' => 'referral_id']],
         ];

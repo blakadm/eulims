@@ -134,7 +134,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     },
                 ],
                 [
-                    'label' => 'Date Analyzed',
+                    'label' => 'Start Date',
                     'format' => 'raw',
                     'value' => function($model, $key, $index, $widget){
                         $start_date = $model->showStartDate($model->sample_id);
@@ -142,7 +142,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     },
                 ],
                 [
-                    'label' => 'Analysis Due Date',
+                    'label' => 'End Date',
                     'format' => 'raw',
                     'value' => function($model, $key, $index, $widget){
                         $end_date = $model->showEndDate($model->sample_id);

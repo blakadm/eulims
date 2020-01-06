@@ -315,7 +315,7 @@ class AnalysisController extends Controller
                     $Command=$Connection->createCommand($sql);
                     $Command->execute();
                 }     
-                Yii::$app->session->setFlash('success', 'Analysis Successfully Added'); 
+               // Yii::$app->session->setFlash('success', 'Analysis Successfully Added'); 
                 return $this->redirect(['/lab/request/view', 'id' =>$request_id]);
 
        }else if (Yii::$app->request->isAjax) {
@@ -421,7 +421,7 @@ class AnalysisController extends Controller
                         $Command=$Connection->createCommand($sql);
                         $Command->execute();
 
-                        Yii::$app->session->setFlash('success', 'Analysis Successfully Update'); 
+                    //    Yii::$app->session->setFlash('success', 'Analysis Successfully Update'); 
                         return $this->redirect(['/lab/request/view', 'id' =>$requestquery->request_id]);
                     }
                 } elseif (Yii::$app->request->isAjax) {
@@ -474,7 +474,7 @@ class AnalysisController extends Controller
                 $sql="UPDATE `tbl_request` SET `total`='$total' WHERE `request_id`=".$model->request_id;
                 $Command=$Connection->createCommand($sql);
                 $Command->execute();
-                Yii::$app->session->setFlash('warning', 'Analysis Successfully Deleted'); 
+              //  Yii::$app->session->setFlash('warning', 'Analysis Successfully Deleted'); 
 
                 return $this->redirect(['/lab/request/view', 'id' => $model->request_id]);
             } else {

@@ -2,11 +2,14 @@
 
 namespace frontend\modules\api\controllers;
 
+use Yii;
 use common\models\lab\Sample;
 use common\models\lab\Analysis;
 use common\models\lab\Workflow;
 use common\models\lab\Request;
+use common\models\lab\Tagging;
 use common\models\lab\Procedure;
+//use common\models\lab\Tagging;
 use common\models\lab\Customer;
 use common\models\lab\Customeraccount;
 use common\models\lab\LogincForm;
@@ -23,6 +26,16 @@ use common\models\finance\CustomerTransaction;
 use common\models\lab\Booking;
 use common\models\system\Rstl;
 use common\models\auth\AuthAssignment;
+use common\components\Functions;
+use yii\web\UploadedFile;
+
+use common\models\rental\Application;
+use common\models\rental\Billing;
+//use common\models\rental\Customer;
+use common\models\rental\Item_type;
+use common\models\rental\Item;
+//use common\models\rental\Profile;
+
 
 class RestapiController extends \yii\rest\Controller
 {
@@ -96,14 +109,6 @@ class RestapiController extends \yii\rest\Controller
                 }
     }
 
-
-
-    // public function actionLogout(){
-    //     \Yii::$app->user->logout();
-    //     return "Logout";
-    // }
-
-
     public function actionUser()
     {  
         $user_id =\Yii::$app->user->identity->profile->user_id;
@@ -131,8 +136,7 @@ class RestapiController extends \yii\rest\Controller
                 'lastname' => $profile->lastname,
                 'type' => $role->item_name]),
                 'user_id'=> $users->user_id
-            ]);
-                   
+            ]);               
     }
 
     public function actionChangestatus()
@@ -154,6 +158,7 @@ class RestapiController extends \yii\rest\Controller
      if (isset($_GET['samplecode'])) {
         //limit for this year only
         $samplecode = Sample::find()->select(['sample_id','sample_code'])
+       // ->Where(['tbl_sample.sample_code'=>$_GET['samplecode']])
         ->where(['LIKE', 'tbl_sample.sample_code', $_GET['samplecode']])
         ->AndWhere(['LIKE', 'sample_year', $year])
         ->all();
@@ -164,36 +169,175 @@ class RestapiController extends \yii\rest\Controller
     public function actionAnalysis()
     {  
         if (isset($_GET['id'])) {
+
+            $code = $_GET['id'];
             $year = date("Y");
-            $sample = Sample::find()->select(['sample_id','sample_code'])
-            ->where(['LIKE', 'tbl_sample.sample_code', $_GET['id']])
-            ->AndWhere(['LIKE', 'sample_year', $year])->one();
-        // $analysis = Analysis::find()->select(['analysis_id','testname', 'method'])
-        // ->where(['LIKE', 'sample_code', $_GET['id']])->all();
-        //progress - count ng ilang ang natapos
-        //workflow - count ng workflow
-        //status
 
-        //$workflow = Workflow::find()->select(['sample_id','sample_code'])->where(['LIKE', 'sample_code', $_GET['id']])->all();
-       // $tagginganalysis = Procedure::find()->select(['sample_id','sample_code'])->where(['LIKE', 'sample_code', $_GET['samplecode']])->all();
-        
-       return $this->asJson(['sampleCode'=>$sample->sample_code, 
-       'samples'=>['name'=>$sample->samplename, 
-       'description'=>$sample->description], 
-            'tests'=> ['id'=>null,
-            'name'=>null, 
-            'method'=>null,
-            'progress'=>null, 
-            'workflow'=>null, 
-            'status'=>null,
-                 'procedures'=>['procedure'=>null,
-                                 'startDate'=>null,
-                                  'endDate'=>null, 
-                                  'status'=>null]]]);
+            $sample = Sample::find()->select(['sample_id','sample_code', 'samplename', 'description'])
+            ->where(['tbl_sample.sample_code'=> $_GET['id']])
+            ->AndWhere(['sample_year'=>$year])->one();
+ 
+            $analysis = Analysis::find()->select(['tbl_analysis.analysis_id','tbl_analysis.testname', 'tbl_analysis.method', 'tbl_tagging.tagging_status_id', 'tbl_tagging.start_date', 'tbl_tagging.end_date'])
+            ->leftJoin('tbl_tagging', 'tbl_tagging.analysis_id=tbl_analysis.analysis_id')
+            ->where([ 'tbl_analysis.sample_id'=>$sample->sample_id])->all();
 
-        // return $this->asJson(['sampleCode'=>$sample->sample_code,
-        //         'samples'=>$sample, 'tests'=>$analysis]);
-                   
+            $tagging = Tagging::find()->select(['tbl_tagging.analysis_id', 'tbl_tagging.tagging_status_id', 'tbl_tagging.start_date', 'tbl_tagging.end_date'])
+            ->leftJoin('tbl_analysis', 'tbl_tagging.analysis_id=tbl_analysis.analysis_id')
+            ->where([ 'tbl_analysis.sample_id'=>$sample->sample_id])->all();
+
+            if ($sample){
+                return $this->asJson(['sampleCode'=>$sample->sample_code, 
+                'samples'=>$sample, 
+                'tests'=>$analysis,
+                'tagging'=>$tagging]);           
+            }                    
+        }
+    }
+
+    public function actionStartanalysis()
+    {  
+        if (isset($_GET['id'])) {
+
+            $date = $_GET['date'];
+
+            $analysis_id = $_GET['id'];
+            $year = date("Y");
+
+            $analysis = Analysis::find()->where(['analysis_id'=>$analysis_id])->one();
+
+            $sample = Sample::find()->select(['sample_id','sample_code', 'samplename', 'description'])
+            ->where(['tbl_sample.sample_id'=> $analysis->sample_id])
+            ->AndWhere(['sample_year'=>$year])->one();
+
+            $now = date("Y-m-d");
+            $Connection= Yii::$app->labdb;
+            $sql="UPDATE `tbl_tagging` SET `tagging_status_id`=1, `start_date`='$date' WHERE `analysis_id`=".$analysis_id;
+            $Command=$Connection->createCommand($sql);
+            $Command->execute();
+      
+            $analysis = Analysis::find()->select(['tbl_analysis.analysis_id','tbl_analysis.testname', 'tbl_analysis.method', 'tbl_tagging.tagging_status_id', 'tbl_tagging.start_date', 'tbl_tagging.end_date'])
+            ->leftJoin('tbl_tagging', 'tbl_tagging.analysis_id=tbl_analysis.analysis_id')
+            ->where([ 'tbl_analysis.sample_id'=>$sample->sample_id])->all();
+
+            $tagging = Tagging::find()->select(['tbl_tagging.analysis_id', 'tbl_tagging.tagging_status_id', 'tbl_tagging.start_date', 'tbl_tagging.end_date'])
+            ->leftJoin('tbl_analysis', 'tbl_tagging.analysis_id=tbl_analysis.analysis_id')
+            ->where([ 'tbl_analysis.sample_id'=>$sample->sample_id])->all();
+
+            if ($sample){
+                return $this->asJson(['sampleCode'=>$sample->sample_code, 
+                'samples'=>$sample, 
+                'tests'=>$analysis,
+                'tagging'=>$tagging]);           
+            }                    
+        }
+    }
+
+    public function actionCompletedanalysis()
+    {  
+        if (isset($_GET['id'])) {
+
+            $analysis_id = $_GET['id'];
+            $year = date("Y");
+            $date = $_GET['date'];
+            $analysis = Analysis::find()->where(['analysis_id'=>$analysis_id])->one();
+
+
+            $sample = Sample::find()->select(['sample_id','sample_code', 'samplename', 'description'])
+            ->where(['tbl_sample.sample_id'=> $analysis->sample_id])
+            ->AndWhere(['sample_year'=>$year])->one();
+
+            $now = date("Y-m-d");
+            $Connection= Yii::$app->labdb;
+            $sql="UPDATE `tbl_tagging` SET `tagging_status_id`=2, `end_date`='$date' WHERE `analysis_id`=".$analysis_id;
+            $Command=$Connection->createCommand($sql);
+            $Command->execute();
+
+            //tracking
+            $taggingcount= Tagging::find()
+            ->leftJoin('tbl_analysis', 'tbl_tagging.analysis_id=tbl_analysis.analysis_id')
+            ->leftJoin('tbl_sample', 'tbl_analysis.sample_id=tbl_sample.sample_id')    
+            ->where(['tbl_tagging.tagging_status_id'=>2, 'tbl_sample.sample_id'=>$analysis->sample_id ])
+            ->all();   
+
+            if ($taggingcount){
+                $counttag = count($taggingcount); 
+             } 
+              $sql="UPDATE `tbl_sample` SET `completed`='$counttag' WHERE `sample_id`=".$analysis->sample_id;
+              $Command=$Connection->createCommand($sql);
+              $Command->execute();                 
+              $samplesq = Sample::find()->where(['sample_id' =>$analysis->sample_id])->one();             
+              $samcount = $samplesq->completed;
+
+              $sampletagged= Sample::find()
+              ->leftJoin('tbl_analysis', 'tbl_sample.sample_id=tbl_analysis.sample_id')
+              ->leftJoin('tbl_tagging', 'tbl_analysis.analysis_id=tbl_tagging.analysis_id') 
+              ->leftJoin('tbl_request', 'tbl_request.request_id=tbl_analysis.request_id')    
+              ->where(['tbl_tagging.tagging_status_id'=>2, 'tbl_request.request_id'=>$samplesq->request_id ])
+              ->all();  
+
+              $st = count($sampletagged);
+
+              if ($samcount==$counttag){
+                $sql="UPDATE `tbl_request` SET `completed`='$st' WHERE `request_id`=".$samplesq->request_id;
+                $Command=$Connection->createCommand($sql);
+                $Command->execute(); 
+              }
+
+              //end of tracking
+      
+            $analysis = Analysis::find()->select(['tbl_analysis.analysis_id','tbl_analysis.testname', 'tbl_analysis.method', 'tbl_tagging.tagging_status_id', 'tbl_tagging.start_date', 'tbl_tagging.end_date'])
+            ->leftJoin('tbl_tagging', 'tbl_tagging.analysis_id=tbl_analysis.analysis_id')
+            ->where([ 'tbl_analysis.sample_id'=>$sample->sample_id])->all();
+
+            $tagging = Tagging::find()->select(['tbl_tagging.analysis_id', 'tbl_tagging.tagging_status_id', 'tbl_tagging.start_date', 'tbl_tagging.end_date'])
+            ->leftJoin('tbl_analysis', 'tbl_tagging.analysis_id=tbl_analysis.analysis_id')
+            ->where([ 'tbl_analysis.sample_id'=>$sample->sample_id])->all();
+
+            if ($sample){
+                return $this->asJson(['sampleCode'=>$sample->sample_code, 
+                'samples'=>$sample, 
+                'tests'=>$analysis,
+                'tagging'=>$tagging]);           
+            }                    
+        }
+    }
+
+    public function actionUpdateanalysis()
+    {  
+        if (isset($_GET['id'])) {
+
+            $analysis_id = $_GET['id'];
+            $start = $_GET['start_date'];
+            $end = $_GET['end_date'];
+
+            $year = date("Y");
+
+            $analysis = Analysis::find()->where(['analysis_id'=>$analysis_id])->one();
+
+
+            $sample = Sample::find()->select(['sample_id','sample_code', 'samplename', 'description'])
+            ->where(['tbl_sample.sample_id'=> $analysis->sample_id])
+            ->AndWhere(['sample_year'=>$year])->one();
+
+            $Connection= Yii::$app->labdb;
+            $sql="UPDATE `tbl_tagging` SET `start_date`='$start', `end_date`='$end' WHERE `analysis_id`=".$analysis_id;
+            $Command=$Connection->createCommand($sql);
+            $Command->execute();
+      
+            $analysis = Analysis::find()->select(['tbl_analysis.analysis_id','tbl_analysis.testname', 'tbl_analysis.method', 'tbl_tagging.tagging_status_id', 'tbl_tagging.start_date', 'tbl_tagging.end_date'])
+            ->leftJoin('tbl_tagging', 'tbl_tagging.analysis_id=tbl_analysis.analysis_id')
+            ->where([ 'tbl_analysis.sample_id'=>$sample->sample_id])->all();
+
+            $tagging = Tagging::find()->select(['tbl_tagging.analysis_id', 'tbl_tagging.tagging_status_id', 'tbl_tagging.start_date', 'tbl_tagging.end_date'])
+            ->leftJoin('tbl_analysis', 'tbl_tagging.analysis_id=tbl_analysis.analysis_id')
+            ->where([ 'tbl_analysis.sample_id'=>$sample->sample_id])->all();
+
+            if ($sample){
+                return $this->asJson(['sampleCode'=>$sample->sample_code, 
+                'samples'=>$sample, 
+                'tests'=>$analysis,
+                'tagging'=>$tagging]);           
+            }                    
         }
     }
 
@@ -271,20 +415,29 @@ class RestapiController extends \yii\rest\Controller
     public function actionUpdatethumbnail(){
         $my_var = \Yii::$app->request->post();
         if($my_var){
-            $product = Products::find()->where(['product_code' => $my_var['product_code']]); //find product using the primarykey
+            $product = Products::find()->where(['product_id' => $my_var['product_id']])->one(); //find product using the primarykey
             if($product){
                 //fetch and save the picture, if (success) update the product
                 //$product->Image1 = my_var/** productname + product code + extension */
 
-                if($product->save()){
+                $image1 = UploadedFile::getInstanceByName('image');
+
+                
+
+                if(!empty($image1) && $image1->size !== 0) {
+                    $image1->saveAs('uploads/products/'.$product->product_code.$product->product_id.'1.'.$image1->extension);
+                    $product->Image1='uploads/products/'.$product->product_code.$product->product_id.'1.'.$image1->extension;
+                }
+
+                if($product->save(false)){
                     return $this->asJson([
                         'success' => true,
-                        'message' => 'Product ('.$product_code.') updated!',
+                        'message' => 'Product ('.$product->product_code.') updated!',
                     ]);
                 }else{
                     return $this->asJson([
                         'success' => false,
-                        'message' => 'Product ('.$product_code.') failed to update!',
+                        'message' => 'Product ('.$product->product_code.') failed to update!',
                     ]); 
                 }
                           
@@ -320,7 +473,7 @@ class RestapiController extends \yii\rest\Controller
 
             return $this->asJson([
                 'success' => true,
-                'message' => 'Schedule created for product code'.$my_var['product_name'],
+                'message' => 'Schedule created for product code '.$product->product_name,
             ]); 
         }else{
             return $this->asJson([
@@ -365,24 +518,71 @@ class RestapiController extends \yii\rest\Controller
     }
 
     public function actionWithdraw(){
-        //use transaction per item
+        //gets the data sent by the mobile app, items to be withdrawn
         $my_var = \Yii::$app->request->post();
-        //first let us save the mother record before the child/item
 
-        $model = new InventoryWithdrawal;
-        $model->created_by=$this->getuserid();
-        $model->withdrawal_datetime=date('Y-m-d');
-        $model->lab_id=1;
-        $model->total_qty=0;//$key['Quantity'];
-        $model->total_cost=0;//$key['Subtotal'];
-        $model->remarks="transaction from mobile";
-        $model->save();
+        //playing safe
+        $session = \Yii::$app->session;
+        try{
+            //begin transaction
+            $connection = \Yii::$app->inventorydb;
+            $transaction = $connection->beginTransaction();
 
-        // the format is objects inside an array
-        foreach($my_var as $myvar) {
-            $entry = InventoryEntries::findOne($key['ID']); //get the entries record
+            if($my_var){//condition to check if there are items to be withdraw
 
+                $model = new InventoryWithdrawal;
+                $model->created_by=$this->getuserid();
+                $model->withdrawal_datetime=date('Y-m-d');
+                $model->lab_id=1; //check if the user has lab_id
+                $model->total_qty=0;
+                $model->total_cost=0;
+                $model->remarks="Transaction made from mobile";
+                if(!$model->save()){ //if the header failed to save
+                    $transaction->rollBack();
+                    throw new \Exception("Cannot save header of Withdrawal Items!", 1);
+                }
+
+                // the format is objects inside an array
+                foreach($my_var as $key) {
+                    $entry = InventoryEntries::findOne($key['id']); //get the entries record
+                    
+                    if($key['quantity']>$entry->quantity_onhand){ // cart qty > withdrawable ~> throw ERR
+                        $transaction->rollBack();
+                        throw new \Exception("Withdrawable Quantity is less than the desired Quantity!", 1);
+                     }
+
+                     //subtract qty in Entries tbl
+                     $entry->quantity_onhand = (int)$entry->quantity_onhand - (int)$key['quantity']; 
+                     if($entry->save()){
+                        $func = new Functions();
+                        $func->checkreorderpoint($entry->product_id);
+                        //create record of withdrawaldetails item
+                        $item = new InventoryWithdrawaldetails();
+                        $item->inventory_withdrawal_id =$model->inventory_withdrawal_id;
+                        $item->inventory_transactions_id=$key['id'];
+                        $item->quantity=$key['quantity'];
+                        $item->price=$entry->amount*(int)$key['quantity'];
+                        $item->withdarawal_status_id=2;
+                        $item->save();
+                      }
+                }
+
+                $transaction->commit();
+                return $this->asJson([
+                    'success' => true,
+                    'message' => 'Processed Successfully!',
+                ]);
+            }else{
+                return $this->asJson([
+                    'success' => false,
+                    'message' => 'Cart Empty',
+                ]); 
+            }
+
+        }catch (\Exception $e) {
+            $transaction->rollBack();
+            throw $e;
         }
-        return true;
+
     }
 }

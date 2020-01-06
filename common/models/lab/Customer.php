@@ -80,7 +80,7 @@ class Customer extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['rstl_id', 'customer_name', 'head', 'tel', 'fax', 'email', 'customer_type_id', 'business_nature_id', 'industrytype_id','classification_id'], 'required'],
+            [['rstl_id', 'customer_name', 'head', 'tel', 'fax', 'email', 'business_nature_id','classification_id'], 'required'],
             [['rstl_id', 'barangay_id', 'customer_type_id', 'business_nature_id', 'industrytype_id', 'classification_id', 'created_at'], 'integer'],
             [['latitude', 'longitude'], 'number'],
             [['customer_code'], 'string', 'max' => 11],
@@ -164,12 +164,16 @@ class Customer extends \yii\db\ActiveRecord
          // return $this->hasOne(Classification::className(), ['classification_id' => 'classification_id']);
          // $address = Barangay::findOne($this->barangay_id);
          // return $address->cityMunicipality->province->region->region.' '.$address->cityMunicipality->province->province.' '.$address->cityMunicipality->city_municipality.' '.$address->barangay;
-
-         $address = Barangay::findOne($this->barangay_id);
-         if($address)
-            return $address->municipalityCity->province->region->reg_desc.', '.$address->municipalityCity->province->prov_desc.', '.$address->municipalityCity->citymun_desc.', '.$address->brgy_desc;
-        else
-            return "none";
+        if($this->address){
+            return $this->address;
+        }
+        else{
+            $address = Barangay::findOne($this->barangay_id);
+            if($address)
+                return $address->municipalityCity->province->region->reg_desc.', '.$address->municipalityCity->province->prov_desc.', '.$address->municipalityCity->citymun_desc.', '.$address->brgy_desc;
+            else
+                return "none";
+        }
 
     }
 }

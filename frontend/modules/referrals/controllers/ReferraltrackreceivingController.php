@@ -86,7 +86,8 @@ class ReferraltrackreceivingController extends Controller
             $model->sample_received_date=$referral->sample_received_date;
             
             $receivingData = Json::encode(['data'=>$model]);
-            $testingUrl ='https://eulimsapi.onelab.ph/api/web/referral/referraltrackreceivings/insertdata';
+            //$testingUrl ='https://eulimsapi.onelab.ph/api/web/referral/referraltrackreceivings/insertdata';
+            $testingUrl ='http://localhost/eulimsapi.onelab.ph/api/web/referral/referraltrackreceivings/insertdata';
 
             $curlReceiving = new Curl();
             $receivingResponse = $curlReceiving->setRequestBody($receivingData)
@@ -100,7 +101,8 @@ class ReferraltrackreceivingController extends Controller
                     if($stat == 0){
                         $shipped=['referralid'=>$referralid,'statusid'=>2];
                         $shippedData = Json::encode(['data'=>$shipped]);
-                        $shippedUrl ='https://eulimsapi.onelab.ph/api/web/referral/statuslogs/insertdata';
+                        //$shippedUrl ='https://eulimsapi.onelab.ph/api/web/referral/statuslogs/insertdata';
+                        $shippedUrl ='http://localhost/eulimsapi.onelab.ph/api/web/referral/statuslogs/insertdata';
 
                         $curlTesting = new Curl();
                         $shippedResponse = $curlTesting->setRequestBody($shippedData)
@@ -146,7 +148,8 @@ class ReferraltrackreceivingController extends Controller
         }
         if ($model->load(Yii::$app->request->post())) {
             $receivingData = Json::encode(['data'=>$model]);
-            $receivingUrl ='https://eulimsapi.onelab.ph/api/web/referral/referraltrackreceivings/updatedata';
+            //$receivingUrl ='https://eulimsapi.onelab.ph/api/web/referral/referraltrackreceivings/updatedata';
+            $receivingUrl ='http://localhost/eulimsapi.onelab.ph/api/web/referral/referraltrackreceivings/updatedata';
 
             $curlReceiving = new Curl();
             $receivingResponse = $curlReceiving->setRequestBody($receivingData)

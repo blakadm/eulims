@@ -87,11 +87,6 @@ class PackagelistController extends Controller
     {
      $model = new Packagelist();
 
-    //  $request_id = $_GET['id'];
-
-    //   $request = $this->findRequest($request_id);
-    //   $labId = $request->lab_id;
-
       $testcategory = $this->listTestcategory(1);
       $sampletype = [];
 
@@ -163,11 +158,7 @@ class PackagelistController extends Controller
                      $p = $post['Packagelist']['name'];
                      $r = str_replace("," , "", $post['Packagelist']['rate']);
 
-                    //  $Connection= Yii::$app->labdb;
-                    //  $sql="UPDATE `tbl_sample` SET `package_id`=$p, `package_rate`='$r' WHERE `sample_id`=".$sample_id;
-                    //  $Command=$Connection->createCommand($sql);
-                    //  $Command->execute();
-
+        
                      $analysis = new Analysis();
                      $modelpackage =  Package::findOne(['id'=>$post['Packagelist']['name']]);
 
@@ -249,20 +240,24 @@ class PackagelistController extends Controller
                 'model' => $model,
                 'searchModel' => $searchModel,
                 'dataProvider' => $dataProvider,
+                'request_id'=>$request_id,
                 'sampleDataProvider' => $sampleDataProvider,
                 'testcategory' => $testcategory,
                 'test' => $test,
+                'labId'=>$labId,
                 'sampletype'=>$sampletype
             ]);
         }else{
             $model->rstl_id = $GLOBALS['rstl_id'];
             return $this->render('_packageform', [
                 'model' => $model,
+                'request_id'=>$request_id,
                 'searchModel' => $searchModel,
                 'dataProvider' => $dataProvider,
                 'sampleDataProvider' => $sampleDataProvider,
                 'testcategory' => $testcategory,
                 'test' => $test,
+                'labId'=>$labId,
                 'sampletype'=>$sampletype
             ]);
         }

@@ -54,8 +54,14 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             'attributes' => [
                 'report_num',
+                [
+                    'label'=>'Request Reference Number',
+                    'value'=>$model->request->request_ref_num,
+                    'displayOnly'=>true,
+                 
+                ],
                 'report_date',
-                'status_id',
+              //  'status_id',
                 'release_date',
                 ],
             ]) ?>

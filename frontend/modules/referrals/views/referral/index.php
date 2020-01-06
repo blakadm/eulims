@@ -77,9 +77,10 @@ $refcomp = new ReferralComponent();
                 'attribute' => 'receiving_agency_id',
                 'format' => 'raw',
                 'value' => function($data) use ($refcomp){
-                    $referred_agency = json_decode($refcomp->listAgency($data['receiving_agency_id']),true);
-                    $receiving_agency = !empty($referred_agency) ? $referred_agency[0]['name'] : null;
-                    return $receiving_agency;
+                    //$referred_agency = json_decode($refcomp->listAgency($data['receiving_agency_id']),true);
+                    //$receiving_agency = !empty($referred_agency) ? $referred_agency[0]['name'] : null;
+                    //return $receiving_agency;
+                    return $data['receiving_agency'];
                 },
                 'headerOptions' => ['class' => 'text-center'],
             ],
@@ -88,9 +89,10 @@ $refcomp = new ReferralComponent();
                 'attribute' => 'testing_agency_id',
                 'format' => 'raw',
                 'value' => function($data) use ($refcomp){
-                    $referred_agency = json_decode($refcomp->listAgency($data['testing_agency_id']),true);
-                    $testing_agency = !empty($referred_agency) ? $referred_agency[0]['name'] : null;
-                    return $testing_agency;
+                    //$referred_agency = json_decode($refcomp->listAgency($data['testing_agency_id']),true);
+                    //$testing_agency = !empty($referred_agency) ? $referred_agency[0]['name'] : null;
+                    //return $testing_agency;
+                    return $data['testing_agency'];
                 },
                 'headerOptions' => ['class' => 'text-center'],
             ],

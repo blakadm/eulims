@@ -217,6 +217,7 @@ class InfoController extends Controller
         }
 
         if(Yii::$app->request->isAjax){
+            $model->customer_type_id=2;
             return $this->renderAjax('create', [
                 'model' => $model,
             ]);

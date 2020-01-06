@@ -16,6 +16,8 @@ class eRequest extends \common\models\lab\Request{
     public $customer_name;
     public $modeofreleaseids;
     public $request_date;
+    public $testcategory_id;
+    public $sampletype_id;
     
     /**
      * {@inheritdoc}
@@ -23,12 +25,12 @@ class eRequest extends \common\models\lab\Request{
     public function rules()
     {
         return [
-            [['request_datetime', 'rstl_id', 'lab_id', 'customer_id', 'payment_type_id', 'discount_id', 'purpose_id', 'report_due', 'conforme', 'receivedBy', 'created_at','modeofreleaseids'], 'required'],
+            [['request_datetime', 'rstl_id', 'lab_id', 'customer_id', 'payment_type_id', 'discount_id', 'purpose_id', 'report_due', 'conforme', 'receivedBy', 'created_at','modeofreleaseids', 'contact_num'], 'required'],
             [['request_type_id'],'required','message'=>'Request Type is required'],
             [['request_datetime', 'report_due','request_date', 'recommended_due_date', 'est_date_completion', 'equipment_release_date', 'certificate_release_date'], 'safe'],
             [['rstl_id', 'lab_id', 'customer_id', 'payment_type_id', 'discount_id', 'purpose_id', 'created_at', 'posted', 'status_id', 'selected', 'request_type_id','payment_status_id'], 'integer'],
             [['discount', 'total'], 'number'],
-            [['request_ref_num', 'modeofrelease_ids', 'conforme', 'receivedBy'], 'string', 'max' => 50],
+            [['request_ref_num', 'modeofrelease_ids', 'conforme', 'receivedBy', 'contact_num'], 'string', 'max' => 50],
             [['position', 'items_receive_by', 'released_by', 'received_by'], 'string', 'max' => 100],
             [['request_ref_num'], 'unique'],
             ['report_due', 'compare','compareAttribute'=>'request_date','operator'=>'>=','message'=>'Report Due should not be less than the request date!', 'when' => function($model) {

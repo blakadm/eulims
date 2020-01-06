@@ -8,6 +8,8 @@ use yii\filters\AccessControl;
 use common\models\system\LoginForm;
 use backend\models\UploadForm;
 use yii\web\UploadedFile;
+use common\models\lab\Loginlogs;
+
 
 /**
  * Site controller
@@ -86,7 +88,19 @@ class SiteController extends Controller
         }
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
+
+            $loginlogs = new Loginlogs();
+            $loginlogs->user_id = (int) Yii::$app->user->identity->profile->user_id;
+            $loginlogs->rstl_id = (int) Yii::$app->user->identity->profile->rstl_id;
+            $loginlogs->login_date = date('Y-m-d H:i:s');
+            $loginlogs->backend = 1;
+            //return $this->goBack();
+
+            if($loginlogs->save()){
+                return $this->goBack();
+            } else {
+                Yii::$app->user->logout();
+            }
         } else {
             return $this->render('login', [
                 'model' => $model,

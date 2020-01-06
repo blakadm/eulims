@@ -52,7 +52,7 @@ class InventoryEntriesSearch extends InventoryEntries
      */
     public function search($params)
     {
-        $query = InventoryEntries::find();
+        $query = InventoryEntries::find()->where(['rstl_id'=>Yii::$app->user->identity->profile->rstl_id]);
 
         // add conditions that should always apply here
 

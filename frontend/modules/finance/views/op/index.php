@@ -54,7 +54,7 @@ if(Yii::$app->user->can('allow-cancel-op')){
         ],
         'panel' => [
                 'type' => GridView::TYPE_PRIMARY,
-                'before'=>$display ? Html::button('<span class="glyphicon glyphicon-plus"></span> Create Order of Payment', ['value'=>'/finance/op/create', 'class' => 'btn btn-success','title' => Yii::t('app', "Create New Order of Payment"),'id'=>'btnOP','onclick'=>'addOp(this.value,this.title)']) : "",
+                'before'=>$display ? Html::button('<span class="glyphicon glyphicon-plus"></span> Create Order of Payment', ['value'=>'/finance/op/create', 'class' => 'btn btn-success','title' => Yii::t('app', "Create New Order of Payment"),'id'=>'btnOP','onclick'=>'LoadModal(this.title, this.value);']) : "",
                 'heading' => '<span class="glyphicon glyphicon-book"></span>  ' . Html::encode($this->title),
             ],
         'exportConfig'=>$func->exportConfig("Order of Payment", "op", $Header),
@@ -73,7 +73,7 @@ if(Yii::$app->user->can('allow-cancel-op')){
                     }else{
                         return "";
                     }
-                   //
+                   
                 },   
                 'hAlign'=>'left',
                 'width' => '30%',  
@@ -159,10 +159,8 @@ if(Yii::$app->user->can('allow-cancel-op')){
                'value'=>function($model){
                     $Obj=$model->getCollectionStatus($model->orderofpayment_id);
                     if($Obj){
-                       //return "<button class='btn ".$Obj[0]['class']." btn-block'><span class=".$Obj[0]['icon']."></span>".$Obj[0]['payment_status']."</button>"; 
                        return "<span class='badge ".$Obj[0]['class']." legend-font' style='width:80px!important;height:20px!important;'>".$Obj[0]['payment_status']."</span>";
                     }else{
-                       //return "<button class='btn btn-primary btn-block'>Unpaid</button>";
                         return "<span class='badge btn-primary legend-font' style='width:80px!important;height:20px!important;'>Unpaid</span>";
                     }
                    //
@@ -170,7 +168,6 @@ if(Yii::$app->user->can('allow-cancel-op')){
                 'hAlign'=>'center',
             ],
             [
-              //'class' => 'yii\grid\ActionColumn'
                 'class' => kartik\grid\ActionColumn::className(),
                 'template' => $Button,
                 'buttons' => [
@@ -182,15 +179,15 @@ if(Yii::$app->user->can('allow-cancel-op')){
                     'update' => function ($url, $model) {
                         $Obj=$model->getCollectionStatus($model->orderofpayment_id);
                         if($Obj){
-                            return $Obj[0]['payment_status_id'] ? ($Obj[0]['payment_status_id'] == 1 ? Html::button('<span class="glyphicon glyphicon-pencil"></span>', ['value' => '/finance/op/update?id=' . $model->orderofpayment_id, 'onclick' => 'LoadModal(this.title, this.value);', 'class' => 'btn btn-success', 'title' => Yii::t('app', "Update Order of Payment]")]) : '') : "";
-                        }//return Html::button('<span class="glyphicon glyphicon-pencil"></span>', ['value' => '/finance/op/update?id=' . $model->orderofpayment_id, 'onclick' => 'LoadModal(this.title, this.value);', 'class' => 'btn btn-success', 'title' => Yii::t('app', "Update Order of Payment]")]);
+                            return $Obj[0]['payment_status_id'] ? ($Obj[0]['payment_status_id'] == 1 ? Html::button('<span class="glyphicon glyphicon-pencil"></span>', ['value' => '/finance/op/update?id=' . $model->orderofpayment_id, 'onclick' => 'LoadModal(this.title, this.value);', 'class' => 'btn btn-success', 'title' => Yii::t('app', "Update Order of Payment")]) : '') : "";
+                        }
                     },
                     'delete' => function ($url, $model) {
                         $Obj=$model->getCollectionStatus($model->orderofpayment_id);
                         if($Obj){
                             return Html::button('<span class="glyphicon glyphicon-ban-circle"></span>', ['value' => '/finance/cancelop/create?op=' . $model->orderofpayment_id,'onclick' => 'LoadModal(this.title, this.value,true,"420px");', 'class' => 'btn btn-danger','disabled'=>$Obj[0]['payment_status'] <> 'Unpaid', 'title' => Yii::t('app', "Cancel Order of Payment")]);
                         }
-//                        
+                      
                     }        
                    
                 ],
@@ -200,49 +197,7 @@ if(Yii::$app->user->can('allow-cancel-op')){
                        
     ]); ?>
       
-     <?php
-    // This section will allow to popup a notification
-    $session = Yii::$app->session;
-    if ($session->isActive) {
-        $session->open();
-        if (isset($session['deletepopup'])) {
-            $func->CrudAlert("Deleted Successfully","WARNING");
-            unset($session['deletepopup']);
-            $session->close();
-        }
-        if (isset($session['updatepopup'])) {
-            $func->CrudAlert("Updated Successfully");
-            unset($session['updatepopup']);
-            $session->close();
-        }
-        if (isset($session['savepopup'])) {
-            $func->CrudAlert("Successfully Saved","SUCCESS",true);
-            unset($session['savepopup']);
-            $session->close();
-        }
-        if (isset($session['errorpopup'])) {
-            $func->CrudAlert("Transaction Error","ERROR",true);
-            unset($session['errorpopup']);
-            $session->close();
-        }
-        if (isset($session['checkpopup'])) {
-            $func->CrudAlert("Insufficient Wallet Balance","INFO",true,false,false);
-            unset($session['checkpopup']);
-            $session->close();
-        }
-    }
-    ?>
+  
   </div>
 </div>
-<script type="text/javascript">
-    $('#btnOP').click(function(){
-        $('.modal-title').html($(this).attr('title'));
-        $('#modal').modal('show')
-            .find('#modalContent')
-            .load($(this).attr('value'));
-    });
-    function addOp(url,title){
-        LoadModal(title,url,'true','700px');
-    }
-  
-</script>
+

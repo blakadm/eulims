@@ -174,21 +174,7 @@ use kartik\money\MaskMoney;
     }
 </style>
 <script type="text/javascript">
-    $('#deposit-deposit_type_id').on('change',function(e) {
-    //   $('#deposit-or_series_id').prop('disabled',false);
-       /*e.preventDefault();
-         jQuery.ajax( {
-            type: 'POST',
-            url: '/finance/op/check-customer-wallet?customerid='+$(this).val(),
-            dataType: 'html',
-            success: function ( response ) {
-               $('#wallet').val(response);
-            },
-            error: function ( xhr, ajaxOptions, thrownError ) {
-                alert( thrownError );
-            }
-        });*/
-    });
+   
     $('#deposit-start_or').on('change',function() {
         $('#deposit-amount').val('');
     });

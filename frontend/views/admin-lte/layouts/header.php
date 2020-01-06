@@ -107,6 +107,13 @@ $GLOBALS['rstl_id']= 11;
                         }else{
                             $CurrentUser = User::findOne(['user_id'=> Yii::$app->user->identity->user_id]);
                             $imagename = $CurrentUser->profile->image_url;
+
+                              
+                            if ($imagename){
+                                $imagename = $CurrentUser->profile->image_url;
+                            }else{
+                                $imagename = "no-image.png";
+                            }
                         }
                      ?>  
                  <?= Html::img("/uploads/user/photo/".$imagename, [ 

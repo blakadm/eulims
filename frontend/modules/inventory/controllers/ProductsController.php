@@ -77,7 +77,7 @@ class ProductsController extends Controller
     {
 
         $model = new Products();
-
+        $model->rstl_id=Yii::$app->user->identity->profile->rstl_id;
         $user_id=Yii::$app->user->identity->profile->user_id;
         $model->created_by=$user_id;
         $model->qty_onhand=0;

@@ -28,7 +28,7 @@ class DefaultController extends Controller
             'query' => $query,
         ]);
 
-        $query = Reorder::find();
+        $query = Reorder::find()->where(['isaction'=>0]);
         $dataProvider2 = new ActiveDataProvider([
             'query' => $query,
         ]);
@@ -38,5 +38,16 @@ class DefaultController extends Controller
         	'dataProvider'=>$dataProvider,
             'dataProvider2'=>$dataProvider2,
         ]);
+    }
+
+    public function actionSolve($id=1){
+        $model=Reorder::find()->where(['reorder_id'=>$id])->one();
+        if($model){
+           $model->isaction=Yii::$app->user->id;
+            if($model->save()){
+                Yii::$app->session->setFlash('success', 'Processed Successfully!');
+            }
+        }
+        return $this->redirect(['index']);
     }
 }

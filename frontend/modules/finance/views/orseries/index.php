@@ -35,7 +35,7 @@ $Header.="O.R Series";
         ],
         'panel' => [
                 'type' => GridView::TYPE_PRIMARY,
-                'before'=>Html::button('<span class="glyphicon glyphicon-plus"></span> Create O.R Series', ['value'=>'/finance/orseries/create', 'class' => 'btn btn-success','title' => Yii::t('app', "Create New O.R Series"),'id'=>'btnOrseries','onclick'=>'addOrseries(this.value,this.title)']),
+                'before'=>Html::button('<span class="glyphicon glyphicon-plus"></span> Create O.R Series', ['value'=>'/finance/orseries/create', 'class' => 'btn btn-success','title' => Yii::t('app', "Create New O.R Series"),'id'=>'btnOrseries','onclick'=>'LoadModal(this.title, this.value);']),
                 'heading' => '<span class="glyphicon glyphicon-book"></span>  ' . Html::encode($this->title),
             ],
         'exportConfig'=>$func->exportConfig("Orseries", "orseries", $Header),
@@ -61,11 +61,25 @@ $Header.="O.R Series";
                 'endor',           
                 [
                     'class' => kartik\grid\ActionColumn::className(),
-                    'template' => $Buttontemplate,
+                    'template' =>$Buttontemplate,
                     'buttons'=>[
+					'delete'=>function ($url,$model) {
+						 if ($model->nextor > ($model->startor + 1)){
+							return;
+						 }
+						 else{
+							$urls = '/finance/orseries/delete?id='.$model->or_series_id;
+                            return Html::a('<span class="glyphicon glyphicon-trash"></span>', $urls,['data-confirm'=>"Are you sure you want to delete this record?<b></b>", 'data-method'=>'post', 'class'=>'btn btn-danger','title'=>'Delete','data-pjax'=>'0']);
+						}
+                    },
                     'update'=>function ($url,$model) {
-                        $t = '/finance/orseries/update?id='.$model->or_series_id;
-                        return Html::button('<span class="glyphicon glyphicon-pencil"></span>', ['value'=>Url::to($t), 'class' => 'btn btn-success btn-modal']);
+						 //if ($model->nextor > $model->endor || $model->nextor > ($model->startor + 1)){
+						 if ($model->nextor > $model->endor){	 
+							return;
+						 }
+						 else{
+							return Html::button('<span class="glyphicon glyphicon-pencil"></span>', ['value'=>Url::to(['/finance/orseries/update','id'=>$model->or_series_id]), 'onclick'=>'LoadModal(this.title, this.value);', 'class' => 'btn btn-primary','title' => Yii::t('app', "Update <font color='Blue'></font>")]);
+						}
                     },
                     
                 ],
@@ -74,15 +88,3 @@ $Header.="O.R Series";
                        
     ]); ?>
 </div>
-<script type="text/javascript">
-    $('#btnOrseries').click(function(){
-        $('.modal-title').html($(this).attr('title'));
-        $('#modal').modal('show')
-            .find('#modalContent')
-            .load($(this).attr('value'));
-    });
-    function addOrseries(url,title){
-        LoadModal(title,url,'true','700px');
-    }
-  
-</script>

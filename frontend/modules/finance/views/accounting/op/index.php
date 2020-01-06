@@ -44,7 +44,7 @@ $CustomerList= ArrayHelper::map(Customer::find()->all(),'customer_id','customer_
         ],
         'panel' => [
                 'type' => GridView::TYPE_PRIMARY,
-                'before'=>Html::button('<span class="glyphicon glyphicon-plus"></span> Create Order of Payment', ['value'=>'/finance/accounting/create-op', 'class' => 'btn btn-success','title' => Yii::t('app', "Create New Order of Payment"),'id'=>'btnOP','onclick'=>'addOp(this.value,this.title)']),
+                'before'=>Html::button('<span class="glyphicon glyphicon-plus"></span> Create Order of Payment', ['value'=>'/finance/accounting/create-op', 'class' => 'btn btn-success','title' => Yii::t('app', "Create New Order of Payment"),'id'=>'btnOP', 'onclick'=>'LoadModal(this.title, this.value);']),
                 'heading' => '<span class="glyphicon glyphicon-book"></span>  ' . Html::encode($this->title),
                 
             ],
@@ -146,53 +146,7 @@ $CustomerList= ArrayHelper::map(Customer::find()->all(),'customer_id','customer_
         ],
     ]); ?>
       
-    <?php
-    // This section will allow to popup a notification
-    $session = Yii::$app->session;
-    if ($session->isActive) {
-        $session->open();
-        if (isset($session['deletepopup'])) {
-            $func->CrudAlert("Deleted Successfully","WARNING");
-            unset($session['deletepopup']);
-            $session->close();
-        }
-        if (isset($session['updatepopup'])) {
-            $func->CrudAlert("Updated Successfully");
-            unset($session['updatepopup']);
-            $session->close();
-        }
-        if (isset($session['savepopup'])) {
-            $func->CrudAlert("Successfully Saved","SUCCESS",true);
-            unset($session['savepopup']);
-            $session->close();
-        }
-        if (isset($session['errorpopup'])) {
-            $func->CrudAlert("Transaction Error","ERROR",true);
-            unset($session['errorpopup']);
-            $session->close();
-        }
-        if (isset($session['checkpopup'])) {
-            $func->CrudAlert("Insufficient Wallet Balance","INFO",true,false,false);
-            unset($session['checkpopup']);
-            $session->close();
-        }
-    }
-    ?>
+    
   </div>
 </div>
-<script type="text/javascript">
-    $('#btnOP').click(function(){
-        $('.modal-title').html($(this).attr('title'));
-        $('#modal').modal('show')
-            .find('#modalContent')
-            .load($(this).attr('value'));
-    });
-   function addOp(url,title){
-       //var url = 'Url::to(['sample/update']) . "?id=' + id;
-       //var url = '/lab/sample/update?id='+id;
-        $(".modal-title").html(title);
-        $('#modal').modal('show')
-            .find('#modalContent')
-            .load(url);
-    }
-</script>
+

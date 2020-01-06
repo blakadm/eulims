@@ -41,7 +41,8 @@ class TestreportSearch extends Testreport
      */
     public function search($params)
     {
-        $query = Testreport::find();
+        $GLOBALS['lab_id']=Yii::$app->user->identity->profile->lab_id;
+        $query = Testreport::find()->Where(['lab_id'=>$GLOBALS['lab_id']]);
 
         // add conditions that should always apply here
 

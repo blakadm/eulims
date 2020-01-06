@@ -1,5 +1,6 @@
 <?php
 use yii\helpers\Html;
+use common\models\lab\Visitedpage;
 
 /* @var $this \yii\web\View */
 /* @var $content string */
@@ -18,6 +19,39 @@ if (Yii::$app->controller->action->id === 'login') {
     backend\assets\AppAsset::register($this);
     dmstr\web\AdminLteAsset::register($this);
     $directoryAsset = Yii::$app->assetManager->getPublishedUrl('@vendor/almasaeed2010/adminlte/dist');
+    ?>
+
+    <?php 
+      //for logging pages accessed by the user
+      if(isset(Yii::$app->user->identity->profile->rstl_id)) {
+
+            $rstlId = (int) Yii::$app->user->identity->profile->rstl_id;
+
+            $page_request = Yii::$app->request;
+            $page_controller = Yii::$app->controller;
+            $pstcId = !empty(Yii::$app->user->identity->profile->pstc_id) ? (int) Yii::$app->user->identity->profile->pstc_id : NULL;
+
+            $logpage = new Visitedpage();            
+            $logpage->absolute_url = $page_request->absoluteUrl;
+            $logpage->home_url = $page_request->hostInfo;
+            $logpage->module =  $page_controller->module->id;
+            $logpage->controller = $page_controller->id;
+            $logpage->action = $page_controller->action->id;
+            $logpage->user_id = (int) Yii::$app->user->identity->profile->user_id;
+            $logpage->params = $page_request->queryString;
+            $logpage->rstl_id = $rstlId;
+            $logpage->pstc_id = $pstcId;
+            $logpage->date_visited = date('Y-m-d H:i:s');
+            if($logpage->save()) {
+              //echo 'save';
+            } else {
+              print_r($logpage->getErrors());
+            }
+      } else {
+          //return 'Session time out!';
+          return Yii::$app->controller->redirect(['/site/login']);
+      }
+
     ?>
     <?php $this->beginPage() ?>
     <!DOCTYPE html>

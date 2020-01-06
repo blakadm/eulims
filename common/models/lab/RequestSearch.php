@@ -20,7 +20,7 @@ class RequestSearch extends exRequest
     public function rules()
     {
         return [
-            [['request_id', 'request_datetime', 'rstl_id', 'lab_id', 'customer_id', 'payment_type_id', 'discount_id', 'purpose_id', 'created_at', 'posted', 'status_id'], 'integer'],
+            [['request_id', 'request_datetime', 'rstl_id', 'lab_id', 'customer_id', 'payment_type_id', 'discount_id', 'purpose_id', 'created_at', 'posted', 'status_id','request_type_id'], 'integer'],
             [['request_ref_num', 'report_due', 'conforme', 'receivedBy'], 'safe'],
             [['modeofrelease_ids', 'receivedBy'], 'string', 'max' => 50],
             [['discount', 'total'], 'number'],
@@ -50,8 +50,8 @@ class RequestSearch extends exRequest
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'sort'=> ['defaultOrder' => ['request_datetime'=>SORT_DESC]]
-            //'sort'=> ['defaultOrder' => ['created_at'=>SORT_DESC]]
+            //'sort'=> ['defaultOrder' => ['request_datetime'=>SORT_DESC]]
+            'sort'=> ['defaultOrder' => ['request_id'=>SORT_DESC]]
         ]);
 
         $this->load($params);
@@ -83,6 +83,7 @@ class RequestSearch extends exRequest
             'created_at' => $this->created_at,
             'posted' => $this->posted,
             'status_id' => $this->status_id,
+            'request_type_id' => $this->request_type_id,
         ]);
 
         $query->andFilterWhere(['like','request_ref_num', $this->request_ref_num])

@@ -9,9 +9,12 @@ use common\models\lab\Customer;
 use common\models\lab\Customeraccount;
 use common\models\lab\LogincForm;
 use common\models\lab\Request;
-use common\models\finance\CustomerWallet;
-use common\models\finance\CustomerTransaction;
+use common\models\finance\Customerwallet;
+use common\models\finance\Customertransaction;
 use common\models\lab\Booking;
+use common\components\Functions;
+use common\models\system\Rstl;
+use common\models\lab\Sample;
 
 class RestcustomerController extends \yii\rest\Controller
 {
@@ -200,14 +203,14 @@ class RestcustomerController extends \yii\rest\Controller
     }
 
     public function actionGetcustomerwallet(){
-        $transactions = CustomerWallet::find()->where(['customer_id'=>$this->getuserid()])->one();
+        $transactions = Customerwallet::find()->where(['customer_id'=>$this->getuserid()])->one();
         return $this->asJson(
             $transactions
         );
     }
 
      public function actionGetwallettransaction($id){
-        $transactions = CustomerTransaction::find()->where(['customerwallet_id'=>$id])->orderby('date DESC')->all();
+        $transactions = Customertransaction::find()->where(['customerwallet_id'=>$id])->orderby('date DESC')->all();
         return $this->asJson(
             $transactions
         );
@@ -251,8 +254,8 @@ class RestcustomerController extends \yii\rest\Controller
         }
     }
 
-    public function actionGetbookings($id){
-        $my_var = Booking::find()->orderby('scheduled_date DESC')->all();
+    public function actionGetbookings(){
+        $my_var = Booking::find()->where(['customer_id'=>$this->getuserid()])->orderby('scheduled_date DESC')->all();
         return $this->asJson(
             $my_var
         );
@@ -370,5 +373,23 @@ class RestcustomerController extends \yii\rest\Controller
     public function actionLogout(){
         \Yii::$app->customeraccount->logout();
         return "Logout";
+    }
+
+    public function actionGetrstl(){
+        $model = Rstl::find()->all();
+        if($model){
+            return $this->asJson(
+                $model
+            ); 
+        }
+    }
+
+    public function actionGetsamples($id){
+        $model = Sample::find()->select(['sample_code','samplename','completed'])->where(['request_id'=>$id])->all();
+        if($model){
+            return $this->asJson(
+                $model
+            ); 
+        }
     }
 }

@@ -69,7 +69,7 @@ $columns =2;
 					 	$cart = unserialize($session['cart']);
 						foreach ($cart as $key) {
 							echo "<div class='col-md-12 item'>";
-							echo "<div class='col-md-12'>".Html::a('<b>x</b>', ['destroyitem','itemid'=>$key['ID']], ['class'=>'btn btn-primary pull-right','title'=>'destroy this order','style'=>'height:auto; color:red; background-color:#fafafa; border-color:#fafafa;'])."</div>";
+							echo "<div class='col-md-12'>".Html::a('<b>x</b>', ['destroyitem','itemid'=>$key['ID']], ['class'=>'btn btn-primary pull-right','title'=>'clear this order','style'=>'height:auto; color:red; background-color:#fafafa; border-color:#fafafa;'])."</div>";
 							echo "<div class='col-md-1'><span class='fa fa-ellipsis-v'></span></div>";
 							echo "<div class='iteminfo col-md-4'>";
 							echo "<div class='itemtitle'>".$key['Name']."</div>";
@@ -95,10 +95,10 @@ $columns =2;
 			                    ]
 			                ); 
 				      
-							echo Html::a("Destroy Order",
+							echo Html::a("Empty Cart",
 								['destroyall'],
 			                    [
-			                    	'data-confirm' =>"Are you sure you want to destroy the cart?",
+			                    	'data-confirm' =>"Are you sure you want to clear the cart?",
 			                    	'class'=>'pull-right btn btn-danger',
 			                    ]
 			                ); 	
