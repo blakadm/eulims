@@ -90,6 +90,8 @@ $model->modeofreleaseids=$model->modeofrelease_ids;
     ])->label('Request Type'); ?>
     </div>
     <div class="col-md-6">
+
+
     <?= $form->field($model, 'request_datetime')->widget(DateTimePicker::classname(), [
         'readonly'=>true,
         'disabled' => $disabled,
@@ -104,7 +106,7 @@ $model->modeofreleaseids=$model->modeofrelease_ids;
             'todayHighlight' => true,
             'todayBtn' => true,
             'format' => 'php:Y-m-d H:i:s',
-            'startDate'=>$RequestStartDate,
+            //'startDate'=>$RequestStartDate,
 	],
         'pluginEvents'=>[
             "changeDate" => "function(e) { 

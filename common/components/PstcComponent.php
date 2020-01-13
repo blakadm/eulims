@@ -24,8 +24,8 @@ use linslin\yii2\curl;
  */
 class PstcComponent extends Component {
 
-    //public $source = 'https://eulimsapi.onelab.ph';
-    public $source = 'http://localhost/eulimsapi.onelab.ph';
+    public $source = 'https://eulimsapi.onelab.ph';
+    //public $source = 'http://localhost/eulimsapi.onelab.ph';
     
 	//list to view
 	function getRequest($rstlId,$accepted)

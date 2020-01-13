@@ -173,8 +173,8 @@ class AttachmentController extends Controller
                         'user_id' => Yii::$app->user->identity->profile->user_id,
                         'uploader' => $uploaderName,
                     ];
-                    //$referralUrl='https://eulimsapi.onelab.ph/api/web/referral/attachments/upload_deposit';
-                    $referralUrl='http://localhost/eulimsapi.onelab.ph/api/web/referral/attachments/upload_deposit';
+                    $referralUrl='https://eulimsapi.onelab.ph/api/web/referral/attachments/upload_deposit';
+                    //$referralUrl='http://localhost/eulimsapi.onelab.ph/api/web/referral/attachments/upload_deposit';
 
                     $data = ['file_data'=>$file_data,'uploader_data'=>json_encode($uploader_data)];
 
@@ -248,8 +248,8 @@ class AttachmentController extends Controller
                         'user_id' => Yii::$app->user->identity->profile->user_id,
                         'uploader' => $uploaderName,
                     ];
-                    //$referralUrl='https://eulimsapi.onelab.ph/api/web/referral/attachments/upload_or';
-                    $referralUrl='http://localhost/eulimsapi.onelab.ph/api/web/referral/attachments/upload_or';
+                    $referralUrl='https://eulimsapi.onelab.ph/api/web/referral/attachments/upload_or';
+                    //$referralUrl='http://localhost/eulimsapi.onelab.ph/api/web/referral/attachments/upload_or';
 
                     $data = ['file_data'=>$file_data,'uploader_data'=>json_encode($uploader_data)];
 
@@ -263,8 +263,8 @@ class AttachmentController extends Controller
 
                     $response = curl_exec($ch);
 
-                    print_r($response);
-                    exit;
+                    //print_r($response);
+                    //exit;
 
                     if($response == 1){
                         Yii::$app->session->setFlash('success', "Official receipt successfully uploaded.");
@@ -350,8 +350,8 @@ class AttachmentController extends Controller
                         'user_id' => Yii::$app->user->identity->profile->user_id,
                         'uploader' => $uploaderName,
                     ];
-                    //$referralUrl='https://eulimsapi.onelab.ph/api/web/referral/attachments/upload_result';
-                    $referralUrl='http://localhost/eulimsapi.onelab.ph/api/web/referral/attachments/upload_result';
+                    $referralUrl='https://eulimsapi.onelab.ph/api/web/referral/attachments/upload_result';
+                    //$referralUrl='http://localhost/eulimsapi.onelab.ph/api/web/referral/attachments/upload_result';
 
                     $data = ['file_data'=>$file_data,'uploader_data'=>json_encode($uploader_data)];
 
@@ -371,8 +371,8 @@ class AttachmentController extends Controller
                         if($stat == 0){
                             $upload=['referralid'=>$referralId,'statusid'=>6];
                             $uploadData = Json::encode(['data'=>$upload]);
-                            //$uploadUrl ='https://eulimsapi.onelab.ph/api/web/referral/statuslogs/insertdata';
-                            $uploadUrl ='http://localhost/eulimsapi.onelab.ph/api/web/referral/statuslogs/insertdata';
+                            $uploadUrl ='https://eulimsapi.onelab.ph/api/web/referral/statuslogs/insertdata';
+                            //$uploadUrl ='http://localhost/eulimsapi.onelab.ph/api/web/referral/statuslogs/insertdata';
 
                             $curlTesting = new Curl();
                             $uploadResponse = $curlTesting->setRequestBody($uploadData)

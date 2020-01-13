@@ -28,7 +28,7 @@ $sampletypelist= ArrayHelper::map(Sampletype::find()->all(),'sampletype_id','typ
         'panel' => [
                 'type' => GridView::TYPE_PRIMARY,
                 'heading' => '<span class="glyphicon glyphicon-book"></span>  ' . Html::encode($this->title),
-              //  'before'=> Html::button('<span class="glyphicon glyphicon-plus"></span> Create Test Category', ['value'=>'/lab/testcategory/create', 'class' => 'btn btn-success modal_services','title' => Yii::t('app', "Create New Test Category")]),
+                'before'=> Html::button('<span class="glyphicon glyphicon-plus"></span> Create Test Category', ['value'=>'/lab/testcategory/create', 'class' => 'btn btn-success modal_services','title' => Yii::t('app', "Create New Test Category")]),
             ],
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],

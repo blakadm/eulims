@@ -1188,6 +1188,9 @@ class Printing {
         $Form="OP-007-F1"."<br>"."Rev. 06 | 11.04.19";
         $Connection = \Yii::$app->labdb;
         
+        $request = Request::find()->where(['request_id' => $id])->one();
+        $completeaddress = $request->customer->completeaddress;
+
         $RequestRows = $Func->ExecuteStoredProcedureRows($Proc, $Params, $Connection);
         $RequestHeader = (object) $RequestRows[0];
        
@@ -1247,7 +1250,8 @@ class Printing {
             $RequestTemplate .= "</tr>";
             $RequestTemplate .= "<tr>";
             $RequestTemplate .= "<td style='border-bottom: 1px solid black;border-left: 1px solid black'>ADDRESS:</td>";
-            $RequestTemplate .= "<td colspan='6' style='border-bottom: 1px solid black;border-bottom: 1px solid black;'>$RequestHeader->address</td>";
+            $RequestTemplate .= "<td colspan='6' style='border-bottom: 1px solid black;border-bottom: 1px solid black;'>$completeaddress</td>";
+         //   $RequestTemplate .= "<td colspan='6' style='border-bottom: 1px solid black;border-bottom: 1px solid black;'>$RequestHeader->address</td>";
             $RequestTemplate .= "<td style='border-bottom: 1px solid black;'>FAX #:</td>";
             $RequestTemplate .= "<td colspan='2' style='border-bottom: 1px solid black;border-right: 1px solid black'>$RequestHeader->fax</td>";
             $RequestTemplate .= "</tr>";

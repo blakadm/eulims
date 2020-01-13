@@ -160,8 +160,8 @@ class ServicesController extends Controller
         if (isset($_POST['depdrop_parents'])) {
             $id = end($_POST['depdrop_parents']);
 
-           // $apiUrl="https://eulimsapi.onelab.ph/api/web/v1/sampletypes/restore?id=".$id;
-            $apiUrl="https://192.168.1.102/api/web/v1/sampletypes/restore?id=".$id;
+            $apiUrl="https://eulimsapi.onelab.ph/api/web/v1/sampletypes/restore?id=".$id;
+           // $apiUrl="https://192.168.1.102/api/web/v1/sampletypes/restore?id=".$id;
             $curl = new curl\Curl();
             $curl->setOption(CURLOPT_SSL_VERIFYPEER, false);
             $response = $curl->get($apiUrl);
@@ -253,9 +253,9 @@ class ServicesController extends Controller
         $decode_labsampletype=Json::decode($response_labsampletype);
 
         foreach ($decode_labsampletype as $labsampletype) {          
-          //  $labsampletypeid = $labsampletype['lab_sampletype_id'];  
+           $labsampletypeid = $labsampletype['lab_sampletype_id'];  
             
-            $labsampletypeid = 2;
+           // $labsampletypeid = 2;
         }
 
         $apiUrl_sampletypetestnames="https://eulimsapi.onelab.ph/api/web/v1/sampletypetestnames/search?testname_id=".$methodreferenceid;

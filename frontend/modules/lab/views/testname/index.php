@@ -12,10 +12,7 @@ $this->title = 'Test Names';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="testname-index">
-
 <?php $this->registerJsFile("/js/services/services.js"); ?>
-
-   
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
@@ -25,7 +22,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'panel' => [
                 'type' => GridView::TYPE_PRIMARY,
                 'heading' => '<span class="glyphicon glyphicon-book"></span>  ' . Html::encode($this->title),
-              //  'before'=> Html::button('<span class="glyphicon glyphicon-plus"></span> Create Test Name', ['value'=>'/lab/testname/create', 'class' => 'btn btn-success modal_services','title' => Yii::t('app', "Create New Test Name")]),
+                'before'=> Html::button('<span class="glyphicon glyphicon-plus"></span> Create Test Name', ['value'=>'/lab/testname/create', 'class' => 'btn btn-success modal_services','title' => Yii::t('app', "Create New Test Name")]),
             ],
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
@@ -48,7 +45,6 @@ $this->params['breadcrumbs'][] = $this->title;
             'max_storage',
             'create_time',
             'update_time',
-
         //     ['class' => 'kartik\grid\ActionColumn',
         //     'contentOptions' => ['style' => 'width: 8.7%'],
         //   //  'template' => $button,

@@ -18,7 +18,7 @@ use common\components\PstcComponent;
 class PstcattachmentController extends Controller
 {
 
-    public $apiUrl = 'http://localhost/eulimsapi.onelab.ph';
+    public $apiUrl = 'https://eulimsapi.onelab.ph';
 
     /**
      * {@inheritdoc}

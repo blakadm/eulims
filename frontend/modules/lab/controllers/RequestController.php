@@ -330,7 +330,7 @@ class RequestController extends Controller
        if(isset($_GET['request_id'])){
         $id = $_GET['request_id'];
         $mpdf = new \Mpdf\Mpdf([
-            'format' => [30,66], 
+            'format' => [60,66], 
             'orientation' => 'L',
         ]);
         $request = Request::find()->where(['request_id' => $id]);

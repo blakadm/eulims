@@ -25,8 +25,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php $this->registerJsFile("/js/services/services.js"); ?>
 
-
-
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
@@ -36,7 +34,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'panel' => [
                 'type' => GridView::TYPE_PRIMARY,
                 'heading' => '<span class="glyphicon glyphicon-book"></span>  ' . Html::encode($this->title),
-                //'before'=> Html::button("<span class='glyphicon glyphicon-plus'></span> Create Lab Sample Type", ["value"=>"/lab/labsampletype/create", "class" => "btn btn-success modal_services","title" => Yii::t("app", "Create New Lab Sample Type")]),
+                'before'=> Html::button("<span class='glyphicon glyphicon-plus'></span> Create Lab Sample Type", ["value"=>"/lab/labsampletype/create", "class" => "btn btn-success modal_services","title" => Yii::t("app", "Create New Lab Sample Type")]),
             ],
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],

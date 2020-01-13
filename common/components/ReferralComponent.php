@@ -30,8 +30,8 @@ use common\models\lab\Sample;
  */
 class ReferralComponent extends Component {
 
-    //public $source = 'https://eulimsapi.onelab.ph';
-    public $source = 'http://localhost/eulimsapi.onelab.ph';
+    public $source = 'https://eulimsapi.onelab.ph';
+    //public $source = 'http://localhost/eulimsapi.onelab.ph';
     /**
      * FindOne testname
      * @param integer $testnameId
